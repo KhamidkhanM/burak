@@ -1,14 +1,21 @@
+# Task N
+def palindromCheck(s):
+    return s == "".join(reversed(s))
+
+
+print(palindromCheck("racecar"))
+
 # Task M
-result = []
+# result = []
 
 
-def getSquareNumbers(n):
-    for i in n:
-        result.append({"number": i, "square": i * i})
-    return result
+# def getSquareNumbers(n):
+#     for i in n:
+#         result.append({"number": i, "square": i * i})
+#     return result
 
 
-print(getSquareNumbers([5, 7, 10]))
+# print(getSquareNumbers([5, 7, 10]))
 
 
 # Task L
