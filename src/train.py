@@ -1,9 +1,22 @@
+# Task O
+def calculate_sum_of_numbers(arr):
+    total = 0
+
+    for item in arr:
+        if type(item) == int or type(item) == float:
+            total = total + item
+
+    return total
+
+
+print(calculate_sum_of_numbers([10, "10", {"son": 10}, True, 35]))
+
 # Task N
-def palindromCheck(s):
-    return s == "".join(reversed(s))
+# def palindromCheck(s):
+#     return s == "".join(reversed(s))
 
 
-print(palindromCheck("racecar"))
+# print(palindromCheck("racecar"))
 
 # Task M
 # result = []

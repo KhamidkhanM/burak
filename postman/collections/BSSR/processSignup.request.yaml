@@ -1,0 +1,16 @@
+$kind: http-request
+name: processSignup
+url: 'localhost:3007/admin/signup'
+method: POST
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "memberNick": "Burak",
+      "memberPhone": "821043544222",
+      "memberPassword": "Damir2020"
+    }
+order: 4500421302923325
