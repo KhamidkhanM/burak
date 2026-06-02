@@ -13,8 +13,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(morgan(MORGAN_FORMAT)); //morgan logger
 
-/** 2-Sessions **/
-
 /** 3-VIEWS **/
 app.set('views', path.join(__dirname, '../views'));
 app.set('view engine', 'ejs');

@@ -1,1 +1,1 @@
-export const MORGAN_FORMAT = `:method :url :res :response-time [:status] \n`;
+export const MORGAN_FORMAT = `:method :url :res[content-length] :response-time [:status] \n`;
