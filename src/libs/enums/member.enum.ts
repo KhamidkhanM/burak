@@ -9,3 +9,8 @@ export enum MemberStatus {
     INACTIVE = "BLOCK",
     DELETE = "DELETE"
 }
+
+export interface LogInput {
+  memberNick: string;
+  memberPassword: string;
+}

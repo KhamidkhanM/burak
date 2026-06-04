@@ -1,12 +1,5 @@
 $kind: http-request
 name: signup
-url: localhost:3007/admin/signup?memberNick=Burak&memberPhone=821043544222&memberPassword=Hamidkhanm77
+url: localhost:3007/admin/signup
 method: GET
-queryParams:
-  - key: memberNick
-    value: Burak
-  - key: memberPhone
-    value: "821043544222"
-  - key: memberPassword
-    value: Hamidkhanm77
 order: 4502782534516953

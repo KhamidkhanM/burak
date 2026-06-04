@@ -1,16 +1,12 @@
 $kind: http-request
 name: processSignup
-url: 'localhost:3007/admin/signup'
+url: localhost:3007/admin/signup
 method: POST
-headers:
-  - key: Content-Type
-    value: application/json
+headers: {}
 body:
-  type: json
-  content: |-
-    {
-      "memberNick": "Burak",
-      "memberPhone": "821043544222",
-      "memberPassword": "Damir2020"
-    }
+  type: urlencoded
+  content:
+    memberNick: Burak
+    memberPhone: "821043544222"
+    memberPassword: Damir2020
 order: 4500421302923325
