@@ -1,8 +1,8 @@
 import { Request, Response} from 'express'
 import { T } from '../libs/types/common';
 import MemberService from '../models/member.service';
-import { MemberInput } from '../libs/types/member';
-import { LogInput, MemberType } from '../libs/enums/member.enum';
+import { MemberInput, LogInput } from '../libs/types/member';
+import { MemberType } from '../libs/enums/member.enum';
 
 const restaurantController: T = {};
 restaurantController.goHome = function (req: Request, res: Response) {
