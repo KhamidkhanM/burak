@@ -1,0 +1,11 @@
+$kind: http-request
+url: localhost:3007/admin/login
+method: POST
+body:
+  type: json
+  content: |-
+    {
+        "memberNick": "Burak",
+        "memberPassword": "Damir2020"
+    }
+order: 4459648751434083

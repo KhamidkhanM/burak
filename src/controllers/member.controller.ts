@@ -1,29 +1,59 @@
 import { Request, Response} from 'express'
 import { T } from '../libs/types/common';
+import MemberService from '../models/member.service';
+import { MemberInput, LogInput, Member } from '../libs/types/member';
+import { MemberType } from '../libs/enums/member.enum';
+import Errors from '../libs/types/Errors';
 
 const memberController: T = {};
-memberController.goHome = function (req: Request, res: Response) {
+
+const memberService = new MemberService();
+
+memberController.goHome = function (_req: Request, res: Response) {
     try {
-        res.send('Home Page');
+        res.render('home');
     } catch (err) {
         console.log('Error in goHome:', err);
     }
 };
 
-memberController.getSignup = function (req: Request, res: Response) {
+memberController.signup = async (req: Request, res: Response) => {
     try {
-        res.send('Signup Page');
+        console.log("signup");
+
+
+        const input: MemberInput = req.body;
+        const result: Member = await memberService.signup(input);
+        //TODO: Tokens
+
+        res.json(result);
     } catch (err) {
-        console.log('Error in getSignup:', err);
+        console.log("Error, signup:", err);
+        if (err instanceof Errors) res.status(err.code).json(err);
+        else res.status(Errors.standard.code).json(Errors.standard);
+        // res.json({ });
     }
 };
 
-memberController.getLogin = function (req: Request, res: Response) {
+memberController.login = async (req: Request, res: Response) => {
     try {
-        res.send('Login Page');
+        console.log("login");
+        const input: LogInput = req.body;
+        const result: Member = await memberService.login(input);
+        //TODO: Tokens
+
+        res.json(result);
+        // res.send("DONE");
     } catch (err) {
-        console.log('Error in getLogin:', err);
+        console.log("Error, login:", err);
+        if (err instanceof Errors) res.status(err.code).json(err);
+        else res.status(Errors.standard.code).json(Errors.standard);
+        // res.json({});
     }
 };
+
+
+
+
 
 export default memberController;

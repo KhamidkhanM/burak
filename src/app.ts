@@ -18,6 +18,6 @@ app.set('views', path.join(__dirname, '../views'));
 app.set('view engine', 'ejs');
 
 /** 4-ROUTERS **/
-app.use("/admin", routerAdmin); //admin panel routes       
-app.use('/', router);       //middleware design pattern
+app.use("/admin", routerAdmin); //ssr      
+app.use('/', router);       //spa
 export default app;

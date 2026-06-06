@@ -15,7 +15,3 @@ routerAdmin.get('/signup', restaurantController.getSignup).post('/signup', resta
 //Product management routes
 export default routerAdmin;
 
-export interface LogInput {
-  memberNick: string;
-  memberPassword: string;
-}

@@ -7,3 +7,16 @@
       css => SNAKE
   - Error handling
 */
+
+/**
+  traditional api
+  rest api
+  graphql api
+  ...
+ */
+
+  /**
+   traditional fd   => bssr (admin)  => ejs
+   modern fd        => ssr (user)    => react
+   ...
+   */
