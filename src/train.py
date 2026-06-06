@@ -1,14 +1,24 @@
+# Task Q
+
+
+def has_property(obj, key):
+    return key in obj
+
+
+print(has_property({"name": "BMW"}, "name"))
+
+
 # Task P
-def object_to_array(obj):
-    result = []
+# def object_to_array(obj):
+#     result = []
 
-    for key, value in obj.items():
-        result.append([key, value])
+#     for key, value in obj.items():
+#         result.append([key, value])
 
-    return result
+#     return result
 
 
-print(object_to_array({"a": 10, "b": 20}))
+# print(object_to_array({"a": 10, "b": 20}))
 
 
 # Task O
