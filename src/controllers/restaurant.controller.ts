@@ -7,7 +7,8 @@ import { MemberType } from '../libs/enums/member.enum';
 const restaurantController: T = {};
 restaurantController.goHome = function (req: Request, res: Response) {
     try {
-        res.send('Home Page');
+        res.render('home');
+
     } catch (err) {
         console.log('Error in goHome:', err);
     }
@@ -15,7 +16,7 @@ restaurantController.goHome = function (req: Request, res: Response) {
 
 restaurantController.getSignup = function (req: Request, res: Response) {
     try {
-        res.send('Signup Page');
+        res.render('signup');
     } catch (err) {
         console.log('Error in getSignup:', err);
     }
@@ -23,7 +24,7 @@ restaurantController.getSignup = function (req: Request, res: Response) {
 
 restaurantController.getLogin = function (req: Request, res: Response) {
     try {
-        res.send('Login Page');
+        res.render('login');
     } catch (err) {
         console.log('Error in getLogin:', err);
     }

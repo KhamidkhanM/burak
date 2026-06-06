@@ -8,13 +8,13 @@ import { MORGAN_FORMAT } from './libs/config';
 
 /** 1-Entrance **/
 const app = express();
-app.use(express.static(path.join(__dirname, '../public')));
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(morgan(MORGAN_FORMAT)); //morgan logger
 
 /** 3-VIEWS **/
-app.set('views', path.join(__dirname, '../views'));
+app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 /** 4-ROUTERS **/
