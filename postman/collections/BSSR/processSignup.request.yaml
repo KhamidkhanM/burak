@@ -2,11 +2,10 @@ $kind: http-request
 name: processSignup
 url: localhost:3007/admin/signup
 method: POST
-headers: {}
 body:
   type: urlencoded
   content:
-    memberNick: Burak
-    memberPhone: "821043544222"
+    memberNick: KFC
+    memberPhone: "821043544225"
     memberPassword: Damir2020
 order: 4500421302923325
