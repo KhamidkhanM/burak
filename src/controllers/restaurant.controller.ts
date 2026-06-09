@@ -3,7 +3,7 @@ import { T } from '../libs/types/common';
 import MemberService from '../models/member.service';
 import { AdminRequest, MemberInput, LogInput } from '../libs/types/member';
 import { MemberType } from '../libs/enums/member.enum';
-import { Message } from '../libs/types/Errors';
+import Errors, { Message } from '../libs/types/Errors';
 
 const restaurantController: T = {};
 restaurantController.goHome = function (req: Request, res: Response) {
@@ -12,6 +12,7 @@ restaurantController.goHome = function (req: Request, res: Response) {
 
     } catch (err) {
         console.log('Error in goHome:', err);
+        res.redirect('/admin');
     }
 };
 
@@ -20,6 +21,7 @@ restaurantController.getSignup = function (req: Request, res: Response) {
         res.render('signup');
     } catch (err) {
         console.log('Error in getSignup:', err);
+        res.redirect('/admin');
     }
 };
 
@@ -28,6 +30,7 @@ restaurantController.getLogin = function (req: Request, res: Response) {
         res.render('login');
     } catch (err) {
         console.log('Error in getLogin:', err);
+        res.redirect('/admin');
     }
 };
 
@@ -49,7 +52,8 @@ restaurantController.processSignup = async (req: AdminRequest, res: Response) =>
 
     } catch (err) {
         console.log("Error, processSignup:", err);
-        res.send(err);
+        const message = err instanceof Errors ? err.message : Message.SOMETHING_WENT_WRONG;
+        res.send(`<script> alert("${message}"); window.location.replace('admin/signup') </script>`);
     }
 };
 
@@ -70,7 +74,24 @@ restaurantController.processLogin = async (req: AdminRequest, res: Response) => 
     });
     } catch (err) {
         console.log("Error, processLogin:", err);
-        res.send(err);
+        const message = err instanceof Errors ? err.message : Message.SOMETHING_WENT_WRONG;
+        res.send(`<script> alert("${message}"); window.location.replace('admin/login') </script>`);
+    }
+};
+
+restaurantController.logout = async (req: AdminRequest, res: Response) => {
+    try {
+        console.log("processLogin");
+        console.log("body:", req.body);
+        req.session.destroy(function() {
+            res.redirect('/admin');
+        });
+    } catch (err) {
+        console.log("Error, Logout:", err);
+        console.log("Error, processLogin:", err);
+        res.redirect('/admin');
+        
+        
     }
 };
 
