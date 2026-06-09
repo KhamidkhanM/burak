@@ -92,7 +92,7 @@ class MemberService {
          throw new Errors(HttpCode.UNAUTHORIZED, Message.WRONG_PASSWORD);
     }
 
-    const result = await this.memberModel.findOne(member._id).lean().exec();
+    const result = await this.memberModel.findOne({ _id: member._id }).lean().exec();
     if (!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_MEMBER_NICK);
     return result;
   }
