@@ -17,8 +17,8 @@ routerAdmin.get('/check-me', restaurantController.checkAuthSession);
 // User management routes
 
 //Product management routes
-routerAdmin.get('/product/all', productController.getAllProducts);
-routerAdmin.post('/product/create', productController.addNewProduct);
-routerAdmin.put('/product/:id', productController.updateChosenProduct);
+routerAdmin.get('/product/all', restaurantController.verifyRestaurant, productController.getAllProducts);
+routerAdmin.post('/product/create', restaurantController.verifyRestaurant, productController.addNewProduct);
+routerAdmin.put('/product/:id', restaurantController.verifyRestaurant, productController.updateChosenProduct);
 export default routerAdmin;
 
