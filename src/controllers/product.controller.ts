@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { T } from '../libs/types/common';
-import Errors from '../libs/types/Errors';
+import Errors from '../libs/types/errors';
 const productController: T = {};
 
 productController.getAllProducts = async (req: Request, res: Response) => {
