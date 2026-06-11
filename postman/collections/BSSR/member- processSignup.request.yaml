@@ -3,9 +3,27 @@ name: "member: processSignup"
 url: localhost:3007/admin/signup
 method: POST
 body:
-  type: urlencoded
+  type: formdata
   content:
-    memberNick: KFC
-    memberPhone: "821043544225"
-    memberPassword: Damir2020
+    - type: text
+      key: memberNick
+      value: Burak
+      description: ""
+      disabled: false
+    - type: text
+      key: memberPhone
+      value: "821043544223"
+      description: ""
+      disabled: false
+    - type: text
+      key: memberPassword
+      value: Damir2020
+      description: ""
+      disabled: false
+    - type: file
+      key: memberImage
+      src:
+        - /Users/hamidkhanm/Desktop/Logo design request_files/7c5f4c28-bec2-45ae-a153-d85cc9af7c84.png
+      description: ""
+      disabled: false
 order: 4500421302923325

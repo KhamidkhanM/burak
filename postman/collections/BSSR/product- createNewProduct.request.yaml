@@ -1,0 +1,5 @@
+$kind: http-request
+name: "product: createNewProduct"
+url: ""
+method: GET
+order: 4503595843921678
