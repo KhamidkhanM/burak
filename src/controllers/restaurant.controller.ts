@@ -3,7 +3,7 @@ import { T } from '../libs/types/common';
 import MemberService from '../models/member.service';
 import { AdminRequest, MemberInput, LogInput } from '../libs/types/member';
 import { MemberType } from '../libs/enums/member.enum';
-import Errors, { Message } from '../libs/types/errors';
+import Errors, { Message } from '../libs/types/Errors';
 
 const restaurantController: T = {};
 restaurantController.goHome = function (req: Request, res: Response) {

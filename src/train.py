@@ -1,20 +1,30 @@
+# Task s
+def missingNumber(nums):
+    n = len(nums)
+    expected = n * (n + 1) // 2
+    actual = sum(nums)
+    return expected - actual
+
+
+print(missingNumber([3, 0, 1]))
+
 # Task R
-def calculate(text):
-    a, operator, b = text.split()
-    a = int(a)
-    b = int(b)
+# def calculate(text):
+#     a, operator, b = text.split()
+#     a = int(a)
+#     b = int(b)
 
-    if operator == "+":
-        return a + b
-    elif operator == "-":
-        return a - b
-    elif operator == "*":
-        return a * b
-    elif operator == "/":
-        return a / b
+#     if operator == "+":
+#         return a + b
+#     elif operator == "-":
+#         return a - b
+#     elif operator == "*":
+#         return a * b
+#     elif operator == "/":
+#         return a / b
 
 
-print(calculate("1 + 3"))
+# print(calculate("1 + 3"))
 
 # Task Q
 
