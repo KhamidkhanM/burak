@@ -1,0 +1,5 @@
+$kind: http-request
+name: "member: checkAuthSession"
+url: ""
+method: GET
+order: 4503010948127297

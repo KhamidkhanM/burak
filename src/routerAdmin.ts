@@ -1,6 +1,7 @@
 import express from 'express';
 const routerAdmin = express.Router();
 import restaurantController from './controllers/restaurant.controller';
+import productController from './controllers/product.controller';
 
 
 // Admin panel routes
@@ -16,5 +17,8 @@ routerAdmin.get('/check-me', restaurantController.checkAuthSession);
 // User management routes
 
 //Product management routes
+routerAdmin.get('/product/all', productController.getAllProducts);
+routerAdmin.post('/product/create', productController.addNewProduct);
+routerAdmin.put('/product/:id', productController.updateChosenProduct);
 export default routerAdmin;
 

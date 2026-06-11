@@ -1,0 +1,5 @@
+$kind: http-request
+name: "member: logout"
+url: ""
+method: GET
+order: 4503328775563975

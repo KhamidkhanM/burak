@@ -1,0 +1,5 @@
+$kind: http-request
+name: "product: getAllProducts"
+url: ""
+method: GET
+order: 4503508090723190

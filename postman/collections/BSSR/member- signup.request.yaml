@@ -1,5 +1,5 @@
 $kind: http-request
-name: signup
+name: "member: signup"
 url: localhost:3007/admin/signup
 method: GET
 order: 4502782534516953

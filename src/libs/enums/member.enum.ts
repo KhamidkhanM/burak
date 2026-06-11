@@ -10,7 +10,3 @@ export enum MemberStatus {
     DELETE = "DELETE"
 }
 
-export interface LogInput {
-  memberNick: string;
-  memberPassword: string;
-}
