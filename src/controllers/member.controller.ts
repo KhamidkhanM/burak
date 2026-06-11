@@ -2,8 +2,7 @@ import { Request, Response} from 'express'
 import { T } from '../libs/types/common';
 import MemberService from '../models/member.service';
 import { MemberInput, LogInput, Member } from '../libs/types/member';
-import { MemberType } from '../libs/enums/member.enum';
-import Errors from '../libs/types/Errors';
+import Errors from '../libs/types/errors';
 
 const memberController: T = {};
 
