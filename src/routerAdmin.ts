@@ -24,6 +24,6 @@ routerAdmin.post('/product/create',
     restaurantController.verifyRestaurant, 
     uploadProductImage.array('productImage', 5),
     productController.addNewProduct);
-routerAdmin.put('/product/:id', restaurantController.verifyRestaurant, productController.updateChosenProduct);
+routerAdmin.post('/product/:id', restaurantController.verifyRestaurant, productController.updateChosenProduct);
 export default routerAdmin;
 

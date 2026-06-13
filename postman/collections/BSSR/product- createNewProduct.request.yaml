@@ -7,7 +7,7 @@ body:
   content:
     - type: text
       key: productName
-      value: Kebab
+      value: Steak
       description: ""
       disabled: false
     - type: text
@@ -17,7 +17,7 @@ body:
       disabled: false
     - type: text
       key: productPrice
-      value: "10"
+      value: "12"
       description: ""
       disabled: false
     - type: text
@@ -27,7 +27,7 @@ body:
       disabled: false
     - type: text
       key: productSize
-      value: normal
+      value: large
       description: ""
       disabled: false
     - type: text

@@ -1,0 +1,12 @@
+$kind: http-request
+name: "product: updateChosenProduct"
+url: localhost:3007/admin/product/6a2d0c8ae64db9be250bae59
+method: POST
+body:
+  type: json
+  content: |-
+    {
+        "productName": "Turkish Steak",
+        "productPrice": "17"
+    }
+order: 4503598155129927
