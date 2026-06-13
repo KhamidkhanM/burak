@@ -47,7 +47,7 @@ productController.addNewProduct = async (req: AdminRequest, res: Response) => {
     } catch (err) {
         console.log("Error, addNewProduct:", err);
         const message = err instanceof Errors ? err.message : Message.SOMETHING_WENT_WRONG;
-        res.send(`<script> alert(${Message}); window.location.replace('/admin/product/all') </script>`);
+        res.send(`<script> alert("${message}"); window.location.replace('/admin/product/all') </script>`);
     }
 };
 
