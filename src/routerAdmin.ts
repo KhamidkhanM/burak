@@ -11,7 +11,7 @@ routerAdmin.get('/', restaurantController.goHome);
 
 routerAdmin.get('/login', restaurantController.getLogin).post('/login', restaurantController.processLogin);
 
-routerAdmin.get('/signup', restaurantController.getSignup).post('/signup', makeUploader('members').array('memberImage'), restaurantController.processSignup);
+routerAdmin.get('/signup', restaurantController.getSignup).post('/signup', makeUploader('members').single('memberImage'), restaurantController.processSignup);
 
 routerAdmin.get('/logout', restaurantController.logout);
 
@@ -22,8 +22,7 @@ routerAdmin.get('/check-me', restaurantController.checkAuthSession);
 routerAdmin.get('/product/all', restaurantController.verifyRestaurant, productController.getAllProducts);
 routerAdmin.post('/product/create', 
     restaurantController.verifyRestaurant, 
-    // uploadProductImage.single('productImage'),
-    makeUploader('products').single('productImage'),
+    uploadProductImage.array('productImage', 5),
     productController.addNewProduct);
 routerAdmin.put('/product/:id', restaurantController.verifyRestaurant, productController.updateChosenProduct);
 export default routerAdmin;

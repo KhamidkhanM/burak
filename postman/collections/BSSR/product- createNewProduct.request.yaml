@@ -1,5 +1,49 @@
 $kind: http-request
 name: "product: createNewProduct"
-url: ""
-method: GET
+url: localhost:3007/admin/product/create
+method: POST
+body:
+  type: formdata
+  content:
+    - type: text
+      key: productName
+      value: Kebab
+      description: ""
+      disabled: false
+    - type: text
+      key: productCollection
+      value: Dish
+      description: ""
+      disabled: false
+    - type: text
+      key: productPrice
+      value: "10"
+      description: ""
+      disabled: false
+    - type: text
+      key: productLeftCount
+      value: "9"
+      description: ""
+      disabled: false
+    - type: text
+      key: productSize
+      value: normal
+      description: ""
+      disabled: false
+    - type: text
+      key: productDesc
+      value: Best
+      description: ""
+      disabled: false
+    - type: text
+      key: productVolume
+      value: "1"
+      description: ""
+      disabled: true
+    - type: file
+      key: productImage
+      src:
+        - /Users/hamidkhanm/Desktop/Logo design request_files/783f702b-3fb5-4e98-a754-34623c69bca1.png
+      description: ""
+      disabled: false
 order: 4503595843921678
