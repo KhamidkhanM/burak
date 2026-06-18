@@ -1,0 +1,5 @@
+$kind: http-request
+name: "member: getUsers"
+url: localhost:3007/admin/user
+method: GET
+order: 4503421332579561
