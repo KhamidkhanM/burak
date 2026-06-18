@@ -1,0 +1,12 @@
+$kind: http-request
+name: "member: updateChosenUser"
+url: localhost:3007/admin/user/edit
+method: POST
+body:
+  type: json
+  content: |-
+    {
+        "_id": "6a339ac79096caddc3050313",
+        "memberStatus": "BLOCK"
+    }
+order: 4481619196581554
