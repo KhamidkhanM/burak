@@ -47,7 +47,7 @@ class MemberService {
       throw new Errors(HttpCode.UNAUTHORIZED, Message.WRONG_PASSWORD);
     }
 
-    return await this.memberModel.findOne(member._id).lean().exec();
+    return await this.memberModel.findOne({ _id: member._id }).lean().exec();
   }
 
   /** SSR */
