@@ -1,29 +1,44 @@
-# Task T
-def mergeSortedArrays(a, b):
-    result = []
-    i = 0
-    j = 0
+# Task V
+def count_chars(str):
+    result = {}
 
-    while i < len(a) and j < len(b):
-        if a[i] <= b[j]:
-            result.append(a[i])
-            i += 1
+    for char in str:
+        if char in result:
+            result[char] = result[char] + 1
         else:
-            result.append(b[j])
-            j += 1
-
-    while i < len(a):
-        result.append(a[i])
-        i += 1
-
-    while j < len(b):
-        result.append(b[j])
-        j += 1
+            result[char] = 1
 
     return result
 
 
-print(mergeSortedArrays([0, 3, 4], [4, 6]))
+print(count_chars("hello"))  # {'h': 1, 'e': 1, 'l': 2, 'o': 1}
+
+# Task T
+# def mergeSortedArrays(a, b):
+#     result = []
+#     i = 0
+#     j = 0
+
+#     while i < len(a) and j < len(b):
+#         if a[i] <= b[j]:
+#             result.append(a[i])
+#             i += 1
+#         else:
+#             result.append(b[j])
+#             j += 1
+
+#     while i < len(a):
+#         result.append(a[i])
+#         i += 1
+
+#     while j < len(b):
+#         result.append(b[j])
+#         j += 1
+
+#     return result
+
+
+# print(mergeSortedArrays([0, 3, 4], [4, 6]))
 
 # Task s
 # def missingNumber(nums):
