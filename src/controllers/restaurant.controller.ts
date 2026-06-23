@@ -2,7 +2,7 @@ import { NextFunction, Request, Response} from 'express'
 import { T } from '../libs/types/common';
 import MemberService from '../models/member.service';
 import { AdminRequest, MemberInput, LogInput } from '../libs/types/member';
-import { MemberType } from '../libs/enums/member.enum';
+import { MemberStatus, MemberType } from '../libs/enums/member.enum';
 import Errors, { HttpCode, Message } from '../libs/types/errors';
 
 const restaurantController: T = {};

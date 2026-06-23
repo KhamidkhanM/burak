@@ -1,11 +1,12 @@
 $kind: http-request
-url: localhost:3007/admin/login
+name: login
+url: localhost:3007/login
 method: POST
 body:
   type: json
   content: |-
     {
-        "memberNick": "Burak",
+        "memberNick": "Joe",
         "memberPassword": "Damir2020"
     }
 order: 4459648751434083
