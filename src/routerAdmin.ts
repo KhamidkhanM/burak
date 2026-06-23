@@ -22,7 +22,7 @@ routerAdmin.get('/check-me', restaurantController.checkAuthSession);
 routerAdmin.get('/product/all', restaurantController.verifyRestaurant, productController.getAllProducts);
 routerAdmin.post('/product/create', 
     restaurantController.verifyRestaurant, 
-    uploadProductImage.array('productImage', 5),
+    uploadProductImage.array('productImages', 5),
     productController.addNewProduct);
 routerAdmin.post('/product/:id', restaurantController.verifyRestaurant, productController.updateChosenProduct);
 

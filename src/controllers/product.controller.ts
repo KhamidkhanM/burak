@@ -14,6 +14,7 @@ productController.getAllProducts = async (req: Request, res: Response) => {
     try {
         console.log("getAllProducts");
         const data = await productService.getAllProducts();
+        // console.log("products:", data)
 
         res.render('products', {products: data});
     } catch (err) {
@@ -28,6 +29,7 @@ productController.addNewProduct = async (req: AdminRequest, res: Response) => {
     try {
         console.log("addNewProduct");
         console.log("req.files", req.files);
+        console.log("req.body:", req.body)
 
         if (!req.files?.length) throw new Errors(HttpCode.INTERNAL_SERVER_ERROR, Message.CREATE_FAILED);
 
