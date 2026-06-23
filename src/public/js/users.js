@@ -1,34 +1,32 @@
-// Client-side script for the admin users page (users.ejs).
-// Currently a placeholder — no logic added yet (the status dropdown isn't wired up to call
-// POST /admin/user/edit, unlike products.js's similar dropdown for products).
-console.log("Users frontend javascript file");
+// Client-side script for the admin users page (users.ejs): status dropdown sends updates via AJAX.
+console.log("Users frontend javascript file"); // debug log, confirms the script loaded
 
-$(function () {
-  $(".member-status").on("change", function (e) {
-    const id = e.target.id;
-    console.log("id:", id);
+$(function () { // runs once the page's DOM is ready
+  $(".member-status").on("change", function (e) { // fires when a user's status dropdown changes
+    const id = e.target.id; // the dropdown's id was set to the member's _id in the EJS loop
+    console.log("id:", id); // debug log
 
-    const memberStatus = $(`#${id}.member-status`).val();
-    console.log("memberStatus:", memberStatus);
+    const memberStatus = $(`#${id}.member-status`).val(); // the newly selected status value
+    console.log("memberStatus:", memberStatus); // debug log
 
     axios
-      .post("/admin/user/edit", {
-        _id: id,
-        memberStatus: memberStatus,
+      .post("/admin/user/edit", { // send the update to the server
+        _id: id, // which member to update
+        memberStatus: memberStatus, // new status value (e.g. BLOCK)
       })
-      .then((response) => {
-        console.log("response:", response);
-        const result = response.data;
-        console.log("result:", result);
+      .then((response) => { // request succeeded
+        console.log("response:", response); // debug log of the raw response
+        const result = response.data; // the JSON body returned by the server
+        console.log("result:", result); // debug log
 
-        if (result.data) {
-          console.log("User updated!");
-          $(".member-status").blur();
-        } else alert("User update failed!");
+        if (result.data) { // server confirmed the update succeeded
+          console.log("User updated!"); // debug log
+          $(".member-status").blur(); // remove focus from the dropdown
+        } else alert("User update failed!"); // server returned no data, treat as failure
       })
-      .catch((err) => {
-        console.log(err);
-        alert("User update failed!");
+      .catch((err) => { // request failed (network error or server threw)
+        console.log(err); // log the error
+        alert("User update failed!"); // tell the user it failed
       });
   });
 });

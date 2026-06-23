@@ -1,38 +1,38 @@
 // SPA/API controller — handles requests from router.ts ('/' routes). Returns JSON, no EJS.
-import { Request, Response} from 'express'
-import { T } from '../libs/types/common';
-import MemberService from '../models/member.service';
-import { MemberInput, LogInput, Member } from '../libs/types/member';
-import Errors from '../libs/types/errors';
+import { Request, Response} from 'express' // Express types
+import { T } from '../libs/types/common'; // generic object type
+import MemberService from '../models/member.service'; // business logic for members
+import { MemberInput, LogInput, Member } from '../libs/types/member'; // typed input/output shapes
+import Errors from '../libs/types/errors'; // custom error class
 
-const memberController: T = {};
+const memberController: T = {}; // plain object that holds all the route handler functions
 
-const memberService = new MemberService();
+const memberService = new MemberService(); // single shared instance of the service
 
 // landing page (shared EJS view, but used here for the SPA entry point)
 memberController.goHome = function (_req: Request, res: Response) {
     try {
-        res.render('home');
+        res.render('home'); // renders views/home.ejs
     } catch (err) {
-        console.log('Error in goHome:', err);
+        console.log('Error in goHome:', err); // log unexpected error
     }
 };
 
 // API signup: creates a regular USER account and returns it as JSON
 memberController.signup = async (req: Request, res: Response) => {
     try {
-        console.log("signup");
+        console.log("signup"); // debug log
 
 
-        const input: MemberInput = req.body;
-        const result: Member = await memberService.signup(input);
+        const input: MemberInput = req.body; // request body cast to the expected shape
+        const result: Member = await memberService.signup(input); // create the user in MongoDB
         //TODO: Tokens
 
-        res.json(result);
+        res.json(result); // send the created member back as JSON
     } catch (err) {
-        console.log("Error, signup:", err);
-        if (err instanceof Errors) res.status(err.code).json(err);
-        else res.status(Errors.standard.code).json(Errors.standard);
+        console.log("Error, signup:", err); // log the real error for debugging
+        if (err instanceof Errors) res.status(err.code).json(err); // known error: use its status code
+        else res.status(Errors.standard.code).json(Errors.standard); // unknown error: fall back to 500
         // res.json({ });
     }
 };
@@ -40,17 +40,17 @@ memberController.signup = async (req: Request, res: Response) => {
 // API login: checks credentials and returns the member as JSON (no session/token yet)
 memberController.login = async (req: Request, res: Response) => {
     try {
-        console.log("login");
-        const input: LogInput = req.body;
-        const result: Member = await memberService.login(input);
+        console.log("login"); // debug log
+        const input: LogInput = req.body; // request body cast to the login shape
+        const result: Member = await memberService.login(input); // verify nick/password against the DB
         //TODO: Tokens
 
-        res.json(result);
+        res.json(result); // send the logged-in member back as JSON
         // res.send("DONE");
     } catch (err) {
-        console.log("Error, login:", err);
-        if (err instanceof Errors) res.status(err.code).json(err);
-        else res.status(Errors.standard.code).json(Errors.standard);
+        console.log("Error, login:", err); // log the real error for debugging
+        if (err instanceof Errors) res.status(err.code).json(err); // known error: use its status code
+        else res.status(Errors.standard.code).json(Errors.standard); // unknown error: fall back to 500
         // res.json({});
     }
 };
@@ -59,4 +59,4 @@ memberController.login = async (req: Request, res: Response) => {
 
 
 
-export default memberController;
+export default memberController; // exported so router.ts can use these handlers
