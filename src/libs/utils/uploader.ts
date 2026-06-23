@@ -3,6 +3,8 @@ import multer from 'multer';
 import {v4} from 'uuid';
 
 /** MULTER IMAGE UPLOADER **/
+// builds a multer disk-storage config that saves files into ./uploads/<address>
+// and renames each file to a random UUID (keeps the original extension) to avoid name clashes
 function getTargetImageStorage(address: any) {
   return multer.diskStorage({
     destination: function (req, file, cb) {
@@ -16,6 +18,7 @@ function getTargetImageStorage(address: any) {
   });
 }
 
+// factory: makeUploader('products') -> a multer instance that saves to ./uploads/products, etc.
 const makeUploader = (address: string) => {
   const storage = getTargetImageStorage(address);
   return multer({ storage: storage });

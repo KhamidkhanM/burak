@@ -1,3 +1,6 @@
+// Client-side script for the admin users page (users.ejs).
+// Currently a placeholder — no logic added yet (the status dropdown isn't wired up to call
+// POST /admin/user/edit, unlike products.js's similar dropdown for products).
 console.log("Users frontend javascript file");
 
 $(function () {

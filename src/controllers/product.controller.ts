@@ -1,3 +1,4 @@
+// Product controller — handles /admin/product/* routes (restaurant menu management).
 import { Request, Response } from 'express';
 import { T } from '../libs/types/common';
 import Errors, { HttpCode, Message } from '../libs/types/errors';
@@ -10,6 +11,7 @@ const productController: T = {};
 
   /** SSR */
 
+// fetches every product and renders the restaurant menu page
 productController.getAllProducts = async (req: Request, res: Response) => {
     try {
         console.log("getAllProducts");
@@ -25,6 +27,7 @@ productController.getAllProducts = async (req: Request, res: Response) => {
     }
 };
 
+// creates a new product with up to 5 uploaded images (only restaurant owners, via verifyRestaurant)
 productController.addNewProduct = async (req: AdminRequest, res: Response) => {
     try {
         console.log("addNewProduct");
@@ -35,10 +38,11 @@ productController.addNewProduct = async (req: AdminRequest, res: Response) => {
 
         const files = req.files as Express.Multer.File[];
         const data: ProductInput = req.body;
+        // form values arrive lowercase from the <select> options, so normalize to match the enums
         if (data.productCollection) data.productCollection = (data.productCollection as string).toUpperCase() as any;
         if (data.productSize) data.productSize = (data.productSize as string).toUpperCase() as any;
         if (data.productStatus) data.productStatus = (data.productStatus as string).toUpperCase() as any;
-        data.productImages = files.map(ele => ele.path.replace(/\\/g, '/'));
+        data.productImages = files.map(ele => ele.path.replace(/\\/g, '/')); // normalize Windows-style path slashes
 
         await productService.createNewProduct(data);
         res.send(`<script> alert('Success'); window.location.replace('/admin/product/all') </script>`);
@@ -53,6 +57,7 @@ productController.addNewProduct = async (req: AdminRequest, res: Response) => {
     }
 };
 
+// updates one product (e.g. status change PAUSE/PROCESS/DELETE) by its id
 productController.updateChosenProduct = async (req: Request, res: Response) => {
     try {
         console.log("updateChosenProduct");

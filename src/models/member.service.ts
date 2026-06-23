@@ -1,3 +1,5 @@
+// Business logic for members: signup, login, password hashing, user management.
+// Talks to MongoDB through MemberModel; controllers call these methods, never the DB directly.
 import MemberModel from "../schema/Member.model";
 import { LogInput, Member, MemberInput, MemberUpdateInput } from "../libs/types/member";
 import Errors, { HttpCode, Message } from "../libs/types/errors";
@@ -14,13 +16,14 @@ class MemberService {
 
   /** SPA */
 
+  // creates a regular USER account (used by the public/SPA signup API)
   public async signup(input: MemberInput): Promise<Member> {
     const salt = await bcrypt.genSalt();
-    input.memberPassword = await bcrypt.hash(input.memberPassword, salt);
+    input.memberPassword = await bcrypt.hash(input.memberPassword, salt); // never store plain-text passwords
 
     try {
       const result = await this.memberModel.create(input);
-      result.memberPassword = "";
+      result.memberPassword = ""; // hide the hash before sending the response back
       return result.toJSON();
 
     } catch (err) {
@@ -29,6 +32,7 @@ class MemberService {
     }
   }
 
+  // verifies a regular USER's credentials (used by the public/SPA login API)
   public async login(input: LogInput): Promise<Member> {
     //TODO: consider member status later, if needed
     const member = await this.memberModel
@@ -43,30 +47,31 @@ class MemberService {
       throw new Errors(HttpCode.FORBIDDEN, Message.BLOCKED_USER)
     }
 
-    const isMatch = await bcrypt.compare(input.memberPassword, member.memberPassword);
+    const isMatch = await bcrypt.compare(input.memberPassword, member.memberPassword); // compare plain password vs stored hash
     console.log("isMatch:", isMatch);
 
     if (!isMatch) {
       throw new Errors(HttpCode.UNAUTHORIZED, Message.WRONG_PASSWORD);
     }
 
-    return await this.memberModel.findOne({ _id: member._id }).lean().exec();
+    return await this.memberModel.findOne({ _id: member._id }).lean().exec(); // fetch the full member document to return
   }
 
   /** SSR */
 
+  // creates a RESTAURANT account (used by the admin panel signup form)
     public async processSignup(input: MemberInput): Promise<Member> {
     // const exist = await this.memberModel
     //   .findOne({ memberType: MemberType.RESTAURANT })
     //   .exec();
     // console.log("exist:", exist);
     // if (exist) throw new Errors(HttpCode.BAD_REQUEST, Message.CREATE_FAILED);
-    
+
     // console.log("before:", input.memberPassword);
     const salt = await bcrypt.genSalt();
     input.memberPassword = await bcrypt.hash(input.memberPassword, salt);
     // console.log("after:", input.memberPassword);
-    
+
     try {
       const result = await this.memberModel.create(input);
       result.memberPassword = "";
@@ -77,6 +82,7 @@ class MemberService {
     }
   }
 
+  // verifies a RESTAURANT member's credentials (used by the admin panel login form)
   public async processLogin(input: LogInput): Promise<Member> {
     const member = await this.memberModel
       .findOne(
@@ -102,8 +108,9 @@ class MemberService {
     if (!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_MEMBER_NICK);
     return result;
   }
-  
 
+
+  // returns every regular USER (for the admin "Users" page) — restaurant members are excluded
   public async getUsers(): Promise<Member[]> {
     const result = await this.memberModel.find({ memberType: MemberType.USER }).exec();
 
@@ -111,8 +118,9 @@ class MemberService {
     return result;
   }
 
+  // updates one user's data (e.g. memberStatus to block/unblock) by _id
   public async updateChosenUser(input: MemberUpdateInput): Promise<Member> {
-    input._id = shapeIntoMongooseObjectId(input._id);
+    input._id = shapeIntoMongooseObjectId(input._id); // convert string id from the request into a real ObjectId
     const result = await this.memberModel.findByIdAndUpdate({ _id: input._id }, input, {new: true}).exec();
 
     if (!result) throw new Errors (HttpCode.NOT_MODIFIED, Message.UPDATE_FAILED);

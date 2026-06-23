@@ -1,3 +1,4 @@
+// SPA/API controller — handles requests from router.ts ('/' routes). Returns JSON, no EJS.
 import { Request, Response} from 'express'
 import { T } from '../libs/types/common';
 import MemberService from '../models/member.service';
@@ -8,6 +9,7 @@ const memberController: T = {};
 
 const memberService = new MemberService();
 
+// landing page (shared EJS view, but used here for the SPA entry point)
 memberController.goHome = function (_req: Request, res: Response) {
     try {
         res.render('home');
@@ -16,6 +18,7 @@ memberController.goHome = function (_req: Request, res: Response) {
     }
 };
 
+// API signup: creates a regular USER account and returns it as JSON
 memberController.signup = async (req: Request, res: Response) => {
     try {
         console.log("signup");
@@ -34,6 +37,7 @@ memberController.signup = async (req: Request, res: Response) => {
     }
 };
 
+// API login: checks credentials and returns the member as JSON (no session/token yet)
 memberController.login = async (req: Request, res: Response) => {
     try {
         console.log("login");

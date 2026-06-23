@@ -1,6 +1,8 @@
+// Client-side script for the admin products page (products.ejs): form UI + AJAX status updates.
 console.log("Products frontend javascript file");
 
 $(function () {
+  // shows the right volume/size field depending on whether the product is a DRINK or not
   $(".product-collection").on("change", () => {
     const selectedValue = $(".product-collection").val();
     if (selectedValue === "DRINK") {
@@ -12,18 +14,21 @@ $(function () {
     }
   });
 
+  // "New Product" button slides the create-product form open
   $("#process-btn").on("click", () => {
     $(".dish-container").slideToggle(500);
     $("#process-btn").css("display", "none");
   });
 
+  // "Cancel" button slides the form closed again
   $("#cancel-btn").on("click", () => {
     $(".dish-container").slideToggle(100);
     $("#process-btn").css("display", "flex");
   });
 
+  // when a product's status dropdown changes, send the update straight to the server (no page reload)
   $(".new-product-status").on("change", async function (e) {
-    const id = e.target.id;
+    const id = e.target.id; // the dropdown's id was set to the product's _id in the EJS loop
     const productStatus = $(`#${id}.new-product-status`).val();
     console.log("id:", id);
     console.log("productStatus:", productStatus);
@@ -43,6 +48,7 @@ $(function () {
   });
 });
 
+// runs before the create-product form submits; checks all required fields are filled
 function validateForm() {
   const productName = $(".product-name").val();
   const productPrice = $(".product-price").val();
@@ -64,6 +70,7 @@ function validateForm() {
   } else return true;
 }
 
+// shows a live preview of a chosen product image in the matching upload slot (1 to 5)
 function previewFileHandler(input, order) {
   const imgClassName = input.className;
   console.log("input:", input);

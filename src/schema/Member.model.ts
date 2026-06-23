@@ -1,22 +1,23 @@
+// Mongoose schema/model for the "members" collection (both regular users and restaurant owners).
 import mongoose, { Schema } from 'mongoose';
 import { MemberStatus, MemberType } from '../libs/enums/member.enum';
 
 const MemberSchema = new Schema({
     memberType: {
         type: String,
-        enum: MemberType,
+        enum: MemberType, // USER / RESTAURANT / ADMIN
         default: MemberType.USER
     },
 
     memberStatus: {
         type: String,
-        enum: MemberStatus,
+        enum: MemberStatus, // ACTIVE / BLOCK / DELETE
         default: MemberStatus.ACTIVE
     },
 
     memberNick: {
         type: String,
-        index: { unique: true, sparse: true }
+        index: { unique: true, sparse: true } // username must be unique (sparse allows it to be missing)
     },
 
     memberPhone: {
@@ -27,7 +28,7 @@ const MemberSchema = new Schema({
 
     memberPassword: {
         type: String,
-        select: false,
+        select: false, // never returned by default queries, keeps the hash out of normal responses
         required: true,
         },
 
@@ -40,7 +41,7 @@ const MemberSchema = new Schema({
         },
 
     memberImage: {
-        type: String,
+        type: String, // file path to the uploaded profile/restaurant image
         },
 
     memberPoints: {
@@ -48,7 +49,7 @@ const MemberSchema = new Schema({
         default: 0,
         },
 }
-, { timestamps: true }
+, { timestamps: true } // adds createdAt / updatedAt automatically
 
 );
 

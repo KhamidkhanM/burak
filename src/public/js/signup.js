@@ -1,10 +1,12 @@
+// Client-side script for the admin signup page (signup.ejs): image preview + form validation.
 console.log("Signup frontend javascript file");
 
 
 $(function () {
-  const fileTarget = $(".file-box .upload-hidden");
+  const fileTarget = $(".file-box .upload-hidden"); // the hidden <input type="file"> for the restaurant image
   let filename;
 
+  // when the user picks an image file, validate its type and show a live preview
   fileTarget.on("change", function () {
     if (window.FileReader) {
       const uploadFile = $(this)[0].files[0];
@@ -15,6 +17,7 @@ $(function () {
       } else {
         if (uploadFile) {
           console.log(URL.createObjectURL(uploadFile));
+          // createObjectURL makes a temporary local preview link, no upload happens yet
           $(".upload-img-frame")
             .attr("src", URL.createObjectURL(uploadFile))
             .addClass("success");
@@ -27,6 +30,7 @@ $(function () {
   });
 });
 
+// runs before the signup form submits; checks all required fields are filled correctly
 function validateSignupForm() {
   const memberNick = $(".member-nick").val();
   const memberPhone = $(".member-phone").val();

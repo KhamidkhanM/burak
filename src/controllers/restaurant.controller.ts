@@ -1,3 +1,4 @@
+// SSR admin (restaurant owner) controller — handles requests for /admin/* routes.
 import { NextFunction, Request, Response} from 'express'
 import { T } from '../libs/types/common';
 import MemberService from '../models/member.service';
@@ -6,6 +7,8 @@ import { MemberStatus, MemberType } from '../libs/enums/member.enum';
 import Errors, { HttpCode, Message } from '../libs/types/errors';
 
 const restaurantController: T = {};
+
+// renders the admin home/landing page
 restaurantController.goHome = function (req: Request, res: Response) {
     try {
         res.render('home');
@@ -16,6 +19,7 @@ restaurantController.goHome = function (req: Request, res: Response) {
     }
 };
 
+// shows the signup form page
 restaurantController.getSignup = function (req: Request, res: Response) {
     try {
         res.render('signup');
@@ -25,6 +29,7 @@ restaurantController.getSignup = function (req: Request, res: Response) {
     }
 };
 
+// shows the login form page
 restaurantController.getLogin = function (req: Request, res: Response) {
     try {
         res.render('login');
@@ -34,22 +39,23 @@ restaurantController.getLogin = function (req: Request, res: Response) {
     }
 };
 
+// handles the signup form submission: creates a new RESTAURANT member with an uploaded image
 restaurantController.processSignup = async (req: AdminRequest, res: Response) => {
     try {
         console.log("processSignup");
         console.log("body:", req.body);
-        const file = req.file;
+        const file = req.file; // uploaded restaurant image, set by multer
         if (!file)
             throw new Errors(HttpCode.BAD_REQUEST, Message.SOMETHING_WENT_WRONG);
 
         const newMember: MemberInput = req.body;
-        newMember.memberImage = file?.path.replace(/\\/g, '/');
+        newMember.memberImage = file?.path.replace(/\\/g, '/'); // normalize Windows-style path slashes
         newMember.memberType = MemberType.RESTAURANT;
 
         const memberService = new MemberService();
         const result = await memberService.processSignup(newMember);
 
-        req.session.member = result;
+        req.session.member = result; // log the new member in right away
         req.session.save(function(){
         res.redirect("/admin/product/all");
     });
@@ -61,12 +67,13 @@ restaurantController.processSignup = async (req: AdminRequest, res: Response) =>
     }
 };
 
+// handles the login form submission: verifies credentials and starts a session
 restaurantController.processLogin = async (req: AdminRequest, res: Response) => {
     try {
         console.log("processLogin");
         console.log("body:", req.body);
         const input: LogInput = req.body;
-        
+
 
         const memberService = new MemberService();
         const result = await memberService.processLogin(input)
@@ -83,6 +90,7 @@ restaurantController.processLogin = async (req: AdminRequest, res: Response) => 
     }
 };
 
+// clears the session (logout)
 restaurantController.logout = async (req: AdminRequest, res: Response) => {
     try {
         console.log("processLogin");
@@ -94,11 +102,12 @@ restaurantController.logout = async (req: AdminRequest, res: Response) => {
         console.log("Error, Logout:", err);
         console.log("Error, processLogin:", err);
         res.redirect('/admin');
-        
-        
+
+
     }
 };
 
+// fetches all regular (non-restaurant) users and renders the user-management page
 restaurantController.getUsers = async (req: Request, res: Response) => {
     try {
         const memberService = new MemberService();
@@ -111,6 +120,7 @@ restaurantController.getUsers = async (req: Request, res: Response) => {
     }
 };
 
+// updates a single user (e.g. block/unblock) and returns the updated record as JSON
 restaurantController.updateChosenUser = async (req: Request, res: Response) => {
     try {
         const memberService = new MemberService();
@@ -124,6 +134,7 @@ restaurantController.updateChosenUser = async (req: Request, res: Response) => {
     }
 };
 
+// simple endpoint to check who (if anyone) is currently logged in via session
 restaurantController.checkAuthSession = async (
   req: AdminRequest,
   res: Response
@@ -138,6 +149,7 @@ restaurantController.checkAuthSession = async (
   }
 };
 
+// middleware: blocks access to admin-only routes unless the session belongs to a RESTAURANT member
 restaurantController.verifyRestaurant = (req: AdminRequest, res: Response, next: NextFunction) => {
     if (req.session?.member?.memberType === MemberType.RESTAURANT) {
         req.member = req.session.member;
@@ -148,4 +160,4 @@ restaurantController.verifyRestaurant = (req: AdminRequest, res: Response, next:
         }
 }
 
-export default restaurantController; 
+export default restaurantController;
