@@ -1,17 +1,30 @@
-# Task V
-def count_chars(str):
-    result = {}
+# Task W
+def chunk_array(array, size):
+    result = []
 
-    for char in str:
-        if char in result:
-            result[char] = result[char] + 1
-        else:
-            result[char] = 1
+    for i in range(0, len(array), size):
+        chunk = array[i:i + size]
+        result.append(chunk)
 
     return result
 
 
-print(count_chars("hello"))  # {'h': 1, 'e': 1, 'l': 2, 'o': 1}
+print(chunk_array([1, 2, 3, 4, 5], 2))
+
+# Task V
+# def count_chars(str):
+#     result = {}
+
+#     for char in str:
+#         if char in result:
+#             result[char] = result[char] + 1
+#         else:
+#             result[char] = 1
+
+#     return result
+
+
+# print(count_chars("hello"))  # {'h': 1, 'e': 1, 'l': 2, 'o': 1}
 
 # Task T
 # def mergeSortedArrays(a, b):
