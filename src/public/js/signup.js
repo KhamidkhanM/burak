@@ -1,6 +1,5 @@
 console.log("Signup frontend javascript file");
 
-console.log("Signup frontend javascript file");
 
 $(function () {
   const fileTarget = $(".file-box .upload-hidden");

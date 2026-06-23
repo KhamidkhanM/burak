@@ -33,8 +33,8 @@ class MemberService {
     //TODO: consider member status later, if needed
     const member = await this.memberModel
       .findOne(
-        { memberNick: input.memberNick },
-        { memberNick: 1, memberPassword: 1 }
+        { memberNick: input.memberNick }, //Filter
+        { memberNick: 1, memberPassword: 1 } //Projection
       )
       .exec();
 
@@ -59,10 +59,10 @@ class MemberService {
     // console.log("exist:", exist);
     // if (exist) throw new Errors(HttpCode.BAD_REQUEST, Message.CREATE_FAILED);
     
-    console.log("before:", input.memberPassword);
+    // console.log("before:", input.memberPassword);
     const salt = await bcrypt.genSalt();
     input.memberPassword = await bcrypt.hash(input.memberPassword, salt);
-    console.log("after:", input.memberPassword);
+    // console.log("after:", input.memberPassword);
     
     try {
       const result = await this.memberModel.create(input);
