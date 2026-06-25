@@ -1,15 +1,29 @@
+# Task X
+def countOccurrences(dictionary, target):
+    count = 0
+    for key, value in dictionary.items():
+        if key == target:
+            count += 1
+        if isinstance(value, dict):
+            count += countOccurrences(value, target)
+    return count
+
+
+print(countOccurrences({"model": "A", "s": {"model": "B"}}, "model"))
+
+
 # Task W
-def chunk_array(array, size):
-    result = []
+# def chunk_array(array, size):
+#     result = []
 
-    for i in range(0, len(array), size):
-        chunk = array[i:i + size]
-        result.append(chunk)
+#     for i in range(0, len(array), size):
+#         chunk = array[i:i + size]
+#         result.append(chunk)
 
-    return result
+#     return result
 
 
-print(chunk_array([1, 2, 3, 4, 5], 2))
+# print(chunk_array([1, 2, 3, 4, 5], 2))
 
 # Task V
 # def count_chars(str):
