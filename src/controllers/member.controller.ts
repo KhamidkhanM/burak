@@ -3,8 +3,9 @@ import { Request, Response} from 'express' // Express types
 import { T } from '../libs/types/common'; // generic object type
 import MemberService from '../models/member.service'; // business logic for members
 import { MemberInput, LogInput, Member } from '../libs/types/member'; // typed input/output shapes
-import Errors from '../libs/types/errors'; // custom error class
+import Errors, { HttpCode } from '../libs/types/errors'; // custom error class + status codes
 import AuthService from '../models/auth.service'; // creates JWT tokens
+import { AUTH_TIMER } from '../libs/config'; // token/cookie lifetime in hours
 
 const memberController: T = {}; // plain object that holds all the route handler functions
 
@@ -29,9 +30,12 @@ memberController.signup = async (req: Request, res: Response) => {
         const input: MemberInput = req.body; // request body cast to the expected shape
         const result: Member = await memberService.signup(input); // create the user in MongoDB
         const token = await authService.createToken(result); // create a JWT for the new member
-        console.log("token =>", token); // debug log
 
-        res.json({ member: result }); // send the created member back as JSON
+        res.cookie("accessToken", token, { // store the token in a browser cookie
+            maxAge: AUTH_TIMER * 3600 * 1000, // cookie lifetime in ms (24h, same as the token)
+            httpOnly: false, // false = frontend JS can read the cookie too
+        });
+        res.status(HttpCode.CREATED).json({ member: result, accessToken: token }); // 201 + member + token
     } catch (err) {
         console.log("Error, signup:", err); // log the real error for debugging
         if (err instanceof Errors) res.status(err.code).json(err); // known error: use its status code
@@ -47,10 +51,12 @@ memberController.login = async (req: Request, res: Response) => {
         const input: LogInput = req.body; // request body cast to the login shape
         const result: Member = await memberService.login(input); // verify nick/password against the DB
         const token = await authService.createToken(result); // create a JWT for the logged-in member
-        console.log("token =>", token); // debug log
 
-        res.json({ member: result }); // send the logged-in member back as JSON
-        // res.send("DONE");
+        res.cookie("accessToken", token, { // store the token in a browser cookie
+            maxAge: AUTH_TIMER * 3600 * 1000, // cookie lifetime in ms (24h, same as the token)
+            httpOnly: false, // false = frontend JS can read the cookie too
+        });
+        res.status(HttpCode.OK).json({ member: result, accessToken: token }); // 200 + member + token
     } catch (err) {
         console.log("Error, login:", err); // log the real error for debugging
         if (err instanceof Errors) res.status(err.code).json(err); // known error: use its status code

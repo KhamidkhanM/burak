@@ -3,6 +3,7 @@ import path from 'path'; // node utility for building file paths
 import router from './router'; // SPA/API routes ('/')
 import routerAdmin from './routerAdmin'; // SSR admin panel routes ('/admin')
 import morgan from 'morgan'; // request logger middleware
+import cookieParser from 'cookie-parser'; // reads cookies from incoming requests (e.g. accessToken)
 import { MORGAN_FORMAT } from './libs/config'; // custom log line format
 
 import session from 'express-session'; // session middleware (keeps users logged in)
@@ -25,6 +26,7 @@ const app = express(); // creates the Express application
 app.use(express.static(path.join(__dirname, 'public'))); // serves /public (css, js, images) directly
 app.use(express.urlencoded({ extended: true })); // parses HTML form data (signup/login forms)
 app.use(express.json()); // parses JSON bodies (used by SPA/API and AJAX calls)
+app.use(cookieParser()); // parses the Cookie header into req.cookies (needed for token auth)
 app.use(morgan(MORGAN_FORMAT)); //morgan logger, logs every request to the console
 
 /** 2-SESSIONS: keeps logged-in admin/member info between requests **/
