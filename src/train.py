@@ -1,13 +1,24 @@
+# Task Z
+def sumEvens(arr):
+    total = 0
+    for num in arr:
+        if num % 2 == 0:
+            total += num
+    return total
+
+
+print(sumEvens([1, 2, 3]))
+
 # Task Y
-def findIntersection(array1, array2):
-    result = []
-    for item in array1:
-        if item in array2:
-            result.append(item)
-    return result
+# def findIntersection(array1, array2):
+#     result = []
+#     for item in array1:
+#         if item in array2:
+#             result.append(item)
+#     return result
 
 
-print(findIntersection([1, 2, 3], [3, 2, 0]))
+# print(findIntersection([1, 2, 3], [3, 2, 0]))
 
 # Task X
 
