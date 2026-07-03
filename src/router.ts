@@ -5,9 +5,9 @@ import memberController from './controllers/member.controller'; // handlers for 
 
 router.get('/', memberController.goHome); // landing page
 
-router.post('/login', memberController.login); // returns JSON, used by SPA frontend
-
-router.post('/signup', memberController.signup); // returns JSON, used by SPA frontend
-
+/** Member **/
+router.post('/member/login', memberController.login); // returns JSON + accessToken cookie
+router.post('/member/signup', memberController.signup); // returns JSON + accessToken cookie
+router.get('/member/detail', memberController.verifyAuth); // checks the token cookie, returns the member inside it
 
 export default router; // exported so app.ts can mount it

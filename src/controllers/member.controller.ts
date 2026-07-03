@@ -3,7 +3,7 @@ import { Request, Response} from 'express' // Express types
 import { T } from '../libs/types/common'; // generic object type
 import MemberService from '../models/member.service'; // business logic for members
 import { MemberInput, LogInput, Member } from '../libs/types/member'; // typed input/output shapes
-import Errors, { HttpCode } from '../libs/types/errors'; // custom error class + status codes
+import Errors, { HttpCode, Message } from '../libs/types/errors'; // custom error class + codes/messages
 import AuthService from '../models/auth.service'; // creates JWT tokens
 import { AUTH_TIMER } from '../libs/config'; // token/cookie lifetime in hours
 
@@ -68,5 +68,23 @@ memberController.login = async (req: Request, res: Response) => {
 
 
 
+
+// API auth check: reads the accessToken cookie and returns the member inside it (or 401)
+memberController.verifyAuth = async (req: Request, res: Response) => {
+    try {
+        let member = null; // will hold the decoded member if the token is valid
+        const token = req.cookies["accessToken"]; // grab the JWT from the browser cookie (needs cookie-parser)
+        if (token) member = await authService.checkAuth(token); // verify signature + expiry, decode the member
+        if (!member)
+            throw new Errors(HttpCode.UNAUTHORIZED, Message.NOT_AUTHENTICATED); // no/invalid token: not logged in
+
+        console.log("member:", member); // debug log
+        res.status(HttpCode.OK).json({ member: member }); // valid token: return the member data
+    } catch (err) {
+        console.log("Error, verifyAuth:", err); // log the real error for debugging
+        if (err instanceof Errors) res.status(err.code).json(err); // known error: use its status code
+        else res.status(Errors.standard.code).json(Errors.standard); // unknown error: fall back to 500
+    }
+};
 
 export default memberController; // exported so router.ts can use these handlers

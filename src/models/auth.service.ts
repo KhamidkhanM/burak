@@ -6,7 +6,10 @@ import { Member } from "../libs/types/member"; // the data we put inside the tok
 import jwt from "jsonwebtoken"; // library that signs/verifies JWT tokens
 
 class AuthService {
-  constructor() {} // nothing to set up
+  private readonly secretToken; // the signing secret, loaded once from .env
+  constructor() {
+    this.secretToken = process.env.SECRET_TOKEN as string; // read SECRET_TOKEN from .env
+  }
 
   // creates a signed JWT that contains the member's data as its payload
   public async createToken(payload: Member) {
@@ -14,7 +17,7 @@ class AuthService {
       const duration = `${AUTH_TIMER}h`; // e.g. "24h" — token expires after this
       jwt.sign(
         payload, // the data stored inside the token (the member object)
-        process.env.SECRET_TOKEN as string, // secret key from .env used to sign the token
+        this.secretToken, // secret key from .env used to sign the token
         { expiresIn: duration }, // token becomes invalid after the duration
         (err, token) => { // callback runs when signing finishes
           if (err)
@@ -25,6 +28,16 @@ class AuthService {
         },
       );
     });
+  }
+
+  // verifies a token's signature + expiry, and returns the member data stored inside it
+  public async checkAuth(token: string): Promise<Member> {
+    const result: Member = (await jwt.verify(
+      token, // the token string from the cookie
+      this.secretToken, // must be verified with the same secret it was signed with
+    )) as Member; // the decoded payload is the member object we signed earlier
+    console.log(`----[AUTH] memberNick: ${result.memberNick}------`); // debug log of who is authenticated
+    return result; // hand the member back to the controller
   }
 }
 
