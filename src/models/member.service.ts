@@ -57,6 +57,16 @@ class MemberService {
     return await this.memberModel.findOne({ _id: member._id }).lean().exec(); // fetch the full member document to return
   }
 
+  // returns the fresh member data for the logged-in member (used by GET /member/detail)
+  public async getMemberDetail(member: Member): Promise<Member> {
+    const memberId = shapeIntoMongooseObjectId(member._id); // the id from the decoded token, made into an ObjectId
+    const result = await this.memberModel
+      .findOne({ _id: memberId, memberStatus: MemberStatus.ACTIVE }) // must exist AND still be active
+      .exec(); // run the query
+    if (!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND); // deleted/blocked since login
+    return result; // hand the fresh member document back
+  }
+
   /** SSR */
 
   // creates a RESTAURANT account (used by the admin panel signup form)

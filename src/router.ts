@@ -13,7 +13,11 @@ router.post(
     memberController.verifyAuth, // middleware: must be logged in to log out
     memberController.logout, // clears the accessToken cookie
 );
-router.get('/member/detail', memberController.verifyAuth); // checks the token cookie via the middleware
+router.get(
+    '/member/detail',
+    memberController.verifyAuth, // middleware: must be logged in
+    memberController.getMemberDetail, // returns fresh member data from the DB
+);
 
 /** Product **/
 /** Order **/

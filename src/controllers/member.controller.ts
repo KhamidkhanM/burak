@@ -85,6 +85,22 @@ memberController.logout = (req: ExtendedRequest, res: Response) => {
     }
 };
 
+// API member detail: returns fresh data of the logged-in member (runs after verifyAuth middleware)
+memberController.getMemberDetail = async (
+    req: ExtendedRequest,
+    res: Response,
+) => {
+    try {
+        console.log("getMemberDetail"); // debug log
+        const result = await memberService.getMemberDetail(req.member); // req.member was set by verifyAuth
+        res.status(HttpCode.OK).json(result); // send the fresh member data back as JSON
+    } catch (err) {
+        console.log("Error, getMemberDetail:", err); // log the real error for debugging
+        if (err instanceof Errors) res.status(err.code).json(err); // known error: use its status code
+        else res.status(Errors.standard.code).json(Errors.standard); // unknown error: fall back to 500
+    }
+};
+
 // MIDDLEWARE: requires a valid token — sets req.member and passes to the next handler, or responds 401
 memberController.verifyAuth = async (
     req: ExtendedRequest,
