@@ -18,6 +18,7 @@ export enum Message {
   UPDATE_FAILED = "Update is failed!", // update failed
 
   USED_NICK_PHONE = "This nickname or phone number is already used!", // duplicate key on signup
+  TOKEN_CREATION_FAILED = "Token creation error!", // jwt.sign failed
   NO_MEMBER_NICK = "No member with this nickname is found!", // login: nickname not found
   BLOCKED_USER = "You have been blocked, contact restaurant!", // login: account is blocked
   WRONG_PASSWORD = "Wrong password, please try again!", // login: password mismatch

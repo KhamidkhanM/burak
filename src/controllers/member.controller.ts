@@ -4,10 +4,12 @@ import { T } from '../libs/types/common'; // generic object type
 import MemberService from '../models/member.service'; // business logic for members
 import { MemberInput, LogInput, Member } from '../libs/types/member'; // typed input/output shapes
 import Errors from '../libs/types/errors'; // custom error class
+import AuthService from '../models/auth.service'; // creates JWT tokens
 
 const memberController: T = {}; // plain object that holds all the route handler functions
 
 const memberService = new MemberService(); // single shared instance of the service
+const authService = new AuthService(); // single shared instance of the auth service
 
 // landing page (shared EJS view, but used here for the SPA entry point)
 memberController.goHome = function (_req: Request, res: Response) {
@@ -26,9 +28,10 @@ memberController.signup = async (req: Request, res: Response) => {
 
         const input: MemberInput = req.body; // request body cast to the expected shape
         const result: Member = await memberService.signup(input); // create the user in MongoDB
-        //TODO: Tokens
+        const token = await authService.createToken(result); // create a JWT for the new member
+        console.log("token =>", token); // debug log
 
-        res.json(result); // send the created member back as JSON
+        res.json({ member: result }); // send the created member back as JSON
     } catch (err) {
         console.log("Error, signup:", err); // log the real error for debugging
         if (err instanceof Errors) res.status(err.code).json(err); // known error: use its status code
@@ -43,9 +46,10 @@ memberController.login = async (req: Request, res: Response) => {
         console.log("login"); // debug log
         const input: LogInput = req.body; // request body cast to the login shape
         const result: Member = await memberService.login(input); // verify nick/password against the DB
-        //TODO: Tokens
+        const token = await authService.createToken(result); // create a JWT for the logged-in member
+        console.log("token =>", token); // debug log
 
-        res.json(result); // send the logged-in member back as JSON
+        res.json({ member: result }); // send the logged-in member back as JSON
         // res.send("DONE");
     } catch (err) {
         console.log("Error, login:", err); // log the real error for debugging

@@ -1,4 +1,5 @@
 // shared small utilities/constants used across the app
+export const AUTH_TIMER = 24; // how long a JWT token stays valid, in hours
 export const MORGAN_FORMAT = `:method :url :res[content-length] :response-time [:status] \n`; // log format for morgan
 
 import mongoose from 'mongoose'; // needed for the ObjectId type
