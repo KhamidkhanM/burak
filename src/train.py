@@ -1,15 +1,27 @@
+# Task Y
+def findIntersection(array1, array2):
+    result = []
+    for item in array1:
+        if item in array2:
+            result.append(item)
+    return result
+
+
+print(findIntersection([1, 2, 3], [3, 2, 0]))
+
 # Task X
-def countOccurrences(dictionary, target):
-    count = 0
-    for key, value in dictionary.items():
-        if key == target:
-            count += 1
-        if isinstance(value, dict):
-            count += countOccurrences(value, target)
-    return count
+
+# def countOccurrences(dictionary, target):
+#     count = 0
+#     for key, value in dictionary.items():
+#         if key == target:
+#             count += 1
+#         if isinstance(value, dict):
+#             count += countOccurrences(value, target)
+#     return count
 
 
-print(countOccurrences({"model": "A", "s": {"model": "B"}}, "model"))
+# print(countOccurrences({"model": "A", "s": {"model": "B"}}, "model"))
 
 
 # Task W
