@@ -8,6 +8,13 @@ router.get('/', memberController.goHome); // landing page
 /** Member **/
 router.post('/member/login', memberController.login); // returns JSON + accessToken cookie
 router.post('/member/signup', memberController.signup); // returns JSON + accessToken cookie
-router.get('/member/detail', memberController.verifyAuth); // checks the token cookie, returns the member inside it
+router.post(
+    '/member/logout',
+    memberController.verifyAuth, // middleware: must be logged in to log out
+    memberController.logout, // clears the accessToken cookie
+);
+router.get('/member/detail', memberController.verifyAuth); // checks the token cookie via the middleware
 
+/** Product **/
+/** Order **/
 export default router; // exported so app.ts can mount it

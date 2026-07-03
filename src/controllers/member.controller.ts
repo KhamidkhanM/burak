@@ -1,8 +1,8 @@
 // SPA/API controller — handles requests from router.ts ('/' routes). Returns JSON, no EJS.
-import { Request, Response} from 'express' // Express types
+import { NextFunction, Request, Response} from 'express' // Express types
 import { T } from '../libs/types/common'; // generic object type
 import MemberService from '../models/member.service'; // business logic for members
-import { MemberInput, LogInput, Member } from '../libs/types/member'; // typed input/output shapes
+import { MemberInput, LogInput, Member, ExtendedRequest } from '../libs/types/member'; // typed input/output shapes
 import Errors, { HttpCode, Message } from '../libs/types/errors'; // custom error class + codes/messages
 import AuthService from '../models/auth.service'; // creates JWT tokens
 import { AUTH_TIMER } from '../libs/config'; // token/cookie lifetime in hours
@@ -69,21 +69,56 @@ memberController.login = async (req: Request, res: Response) => {
 
 
 
-// API auth check: reads the accessToken cookie and returns the member inside it (or 401)
-memberController.verifyAuth = async (req: Request, res: Response) => {
+// API logout: clears the accessToken cookie so the browser is no longer authenticated
+memberController.logout = (req: ExtendedRequest, res: Response) => {
     try {
-        let member = null; // will hold the decoded member if the token is valid
-        const token = req.cookies["accessToken"]; // grab the JWT from the browser cookie (needs cookie-parser)
-        if (token) member = await authService.checkAuth(token); // verify signature + expiry, decode the member
-        if (!member)
-            throw new Errors(HttpCode.UNAUTHORIZED, Message.NOT_AUTHENTICATED); // no/invalid token: not logged in
+        console.log("logout"); // debug log
+        res.cookie("accessToken", null, { // overwrite the cookie with null
+            maxAge: 0, // expire it immediately, the browser deletes it
+            httpOnly: true, // not readable by frontend JS anymore
+        });
+        res.status(HttpCode.OK).json({ logout: true }); // confirm the logout
+    } catch (err) {
+        console.log("Error, logout:", err); // log the real error for debugging
+        if (err instanceof Errors) res.status(err.code).json(err); // known error: use its status code
+        else res.status(Errors.standard.code).json(Errors.standard); // unknown error: fall back to 500
+    }
+};
 
-        console.log("member:", member); // debug log
-        res.status(HttpCode.OK).json({ member: member }); // valid token: return the member data
+// MIDDLEWARE: requires a valid token — sets req.member and passes to the next handler, or responds 401
+memberController.verifyAuth = async (
+    req: ExtendedRequest,
+    res: Response,
+    next: NextFunction, // the next handler in the route chain
+) => {
+    try {
+        const token = req.cookies["accessToken"]; // grab the JWT from the browser cookie (needs cookie-parser)
+        if (token) req.member = await authService.checkAuth(token); // verify + decode, attach the member to the request
+
+        if (!req.member)
+            throw new Errors(HttpCode.UNAUTHORIZED, Message.NOT_AUTHENTICATED); // no/invalid token: block the request
+
+        next(); // token is valid: continue to the actual route handler
     } catch (err) {
         console.log("Error, verifyAuth:", err); // log the real error for debugging
         if (err instanceof Errors) res.status(err.code).json(err); // known error: use its status code
         else res.status(Errors.standard.code).json(Errors.standard); // unknown error: fall back to 500
+    }
+};
+
+// MIDDLEWARE: optional auth — sets req.member if a valid token exists, but never blocks the request
+memberController.retrieveAuth = async (
+    req: ExtendedRequest,
+    res: Response,
+    next: NextFunction, // the next handler in the route chain
+) => {
+    try {
+        const token = req.cookies["accessToken"]; // grab the JWT from the browser cookie
+        if (token) req.member = await authService.checkAuth(token); // attach the member if the token is valid
+        next(); // continue either way
+    } catch (err) {
+        console.log("Error, retrieveAuth:", err); // log, but don't block
+        next(); // continue even if the token was invalid (guest access)
     }
 };
 

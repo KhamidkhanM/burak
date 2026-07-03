@@ -51,6 +51,14 @@ export interface MemberUpdateInput {
   memberImage?: string; // change image
 }
 
+// extends Express's Request for token-authenticated SPA routes:
+// req.member is set by the verifyAuth/retrieveAuth middleware after decoding the JWT
+export interface ExtendedRequest extends Request {
+  member: Member; // the member decoded from the accessToken cookie
+  file: Express.Multer.File; // single uploaded file (multer)
+  files: Express.Multer.File[]; // multiple uploaded files (multer)
+}
+
 // extends Express's Request with the extra fields used in admin routes:
 // the logged-in member, a typed session, and multer's uploaded file(s)
 export interface AdminRequest extends Request {
