@@ -26,6 +26,7 @@ router.post(
 );
 
 router.get("/member/top-users", memberController.getTopUsers);
+router.get("/member/restaurant", memberController.getRestaurant);
 
 /** Product **/
 /** Order **/

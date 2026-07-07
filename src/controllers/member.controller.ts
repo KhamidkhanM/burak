@@ -21,6 +21,20 @@ memberController.goHome = function (_req: Request, res: Response) {
     }
 };
 
+
+memberController.getRestaurant = async (req: Request, res: Response) => {
+    try {
+        console.log("getRestaurant");
+        const result = await memberService.getRestaurant();
+
+        res.status(HttpCode.OK).json(result);
+    } catch (err) {
+        console.log("Error, getRestaurant: ", err);
+        if (err instanceof Errors) res.status(err.code).json(err);
+        else res.status(Errors.standart.code).json(Errors.standart);
+    }
+};
+
 // API signup: creates a regular USER account and returns it as JSON
 memberController.signup = async (req: Request, res: Response) => {
     try {

@@ -92,6 +92,17 @@ class MemberService {
     return result;
   }
 
+  public async getRestaurant(): Promise<Member> {
+    const result = await this.memberModel
+      .findOne({ memberType: MemberType.RESTAURANT })
+      //.lean() yangi nimidr dataset qushmoqchi bo'lsak ishlatamiz leaning vazifasi shu
+      .exec();
+    //result.target = "test";
+    if (!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
+
+    return result;
+  }
+
   /** SSR */
 
   // creates a RESTAURANT account (used by the admin panel signup form)
