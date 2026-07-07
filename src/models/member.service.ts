@@ -37,13 +37,13 @@ class MemberService {
     //TODO: consider member status later, if needed
     const member = await this.memberModel
       .findOne(
-        { memberNick: input.memberNick, memberStatus: {$ne: MemberStatus.DELETE}}, //Filter. $ne = not equal
+        { memberNick: input.memberNick, memberStatus: { $ne: MemberStatus.DELETE } }, //Filter. $ne = not equal
         { memberNick: 1, memberPassword: 1, memberStatus: 1 } //Projection: only fetch these fields
       )
       .exec(); // run the query
 
     if (!member) throw new Errors(HttpCode.NOT_FOUND, Message.NO_MEMBER_NICK); // no account with that nickname
-    else if(member.memberStatus === MemberStatus.BLOCK) { // account exists but is blocked
+    else if (member.memberStatus === MemberStatus.BLOCK) { // account exists but is blocked
       throw new Errors(HttpCode.FORBIDDEN, Message.BLOCKED_USER) // refuse login
     }
 
@@ -67,10 +67,23 @@ class MemberService {
     return result; // hand the fresh member document back
   }
 
+  public async updateMember(
+    member: Member,
+    input: MemberUpdateInput,
+  ): Promise<Member> {
+    const memberId = shapeIntoMongooseObjectId(member._id);
+    const result = await this.memberModel
+      .findOneAndUpdate({ _id: memberId }, input, { new: true })
+      .exec();
+    if (!result) throw new Errors(HttpCode.NOT_MODIFIED, Message.UPDATE_FAILED);
+
+    return result;
+  }
+
   /** SSR */
 
   // creates a RESTAURANT account (used by the admin panel signup form)
-    public async processSignup(input: MemberInput): Promise<Member> {
+  public async processSignup(input: MemberInput): Promise<Member> {
     // const exist = await this.memberModel
     //   .findOne({ memberType: MemberType.RESTAURANT })
     //   .exec();
@@ -111,7 +124,7 @@ class MemberService {
     console.log("isMatch:", isMatch); // debug log
 
     if (!isMatch) {
-         throw new Errors(HttpCode.UNAUTHORIZED, Message.WRONG_PASSWORD); // password didn't match
+      throw new Errors(HttpCode.UNAUTHORIZED, Message.WRONG_PASSWORD); // password didn't match
     }
 
     const result = await this.memberModel.findOne({ _id: member._id }).lean().exec(); // fetch the full member document
@@ -124,16 +137,16 @@ class MemberService {
   public async getUsers(): Promise<Member[]> {
     const result = await this.memberModel.find({ memberType: MemberType.USER }).exec(); // fetch all USER-type accounts
 
-    if (!result) throw new Errors (HttpCode.NOT_FOUND, Message.NO_DATA_FOUND); // (find() never actually returns null, but kept as a safety check)
+    if (!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND); // (find() never actually returns null, but kept as a safety check)
     return result;
   }
 
   // updates one user's data (e.g. memberStatus to block/unblock) by _id
   public async updateChosenUser(input: MemberUpdateInput): Promise<Member> {
     input._id = shapeIntoMongooseObjectId(input._id); // convert string id from the request into a real ObjectId
-    const result = await this.memberModel.findByIdAndUpdate({ _id: input._id }, input, {new: true}).exec(); // {new:true} returns the updated doc
+    const result = await this.memberModel.findByIdAndUpdate({ _id: input._id }, input, { new: true }).exec(); // {new:true} returns the updated doc
 
-    if (!result) throw new Errors (HttpCode.NOT_MODIFIED, Message.UPDATE_FAILED); // no document found to update
+    if (!result) throw new Errors(HttpCode.NOT_MODIFIED, Message.UPDATE_FAILED); // no document found to update
     return result;
   }
 

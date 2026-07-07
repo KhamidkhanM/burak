@@ -2,7 +2,7 @@
 import express from 'express'; // web framework
 const router = express.Router(); // creates a router instance to attach routes to
 import memberController from './controllers/member.controller'; // handlers for these routes
-
+import uploader from './libs/utils/uploader'; // middleware for handling file uploads
 router.get('/', memberController.goHome); // landing page
 
 /** Member **/
@@ -17,6 +17,12 @@ router.get(
     '/member/detail',
     memberController.verifyAuth, // middleware: must be logged in
     memberController.getMemberDetail, // returns fresh member data from the DB
+);
+router.post(
+    '/member/update',
+    memberController.verifyAuth, // middleware: must be logged in
+    uploader("members").single("memberImage"), // middleware: handles the file upload
+    memberController.updateMember, // updates the member's data in the DB
 );
 
 /** Product **/

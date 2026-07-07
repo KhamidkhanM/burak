@@ -1,8 +1,8 @@
 // SPA/API controller — handles requests from router.ts ('/' routes). Returns JSON, no EJS.
-import { NextFunction, Request, Response} from 'express' // Express types
+import { NextFunction, Request, Response } from 'express' // Express types
 import { T } from '../libs/types/common'; // generic object type
 import MemberService from '../models/member.service'; // business logic for members
-import { MemberInput, LogInput, Member, ExtendedRequest } from '../libs/types/member'; // typed input/output shapes
+import { MemberInput, LogInput, Member, ExtendedRequest, MemberUpdateInput } from '../libs/types/member'; // typed input/output shapes
 import Errors, { HttpCode, Message } from '../libs/types/errors'; // custom error class + codes/messages
 import AuthService from '../models/auth.service'; // creates JWT tokens
 import { AUTH_TIMER } from '../libs/config'; // token/cookie lifetime in hours
@@ -98,6 +98,23 @@ memberController.getMemberDetail = async (
         console.log("Error, getMemberDetail:", err); // log the real error for debugging
         if (err instanceof Errors) res.status(err.code).json(err); // known error: use its status code
         else res.status(Errors.standard.code).json(Errors.standard); // unknown error: fall back to 500
+    }
+};
+
+
+memberController.updateMember = async (req: ExtendedRequest, res: Response) => {
+    try {
+        console.log("updateMember");
+        const input: MemberUpdateInput = req.body;
+        if (req.file) input.memberImage = req.file.path.replace(/\\/, "/");
+
+        const result = await memberService.updateMember(req.member, input);
+
+        res.status(HttpCode.OK).json(result);
+    } catch (err) {
+        console.log("Error, updateMember: ", err);
+        if (err instanceof Errors) res.status(err.code).json(err);
+        else res.status(Errors.standard.code).json(Errors.standard);
     }
 };
 

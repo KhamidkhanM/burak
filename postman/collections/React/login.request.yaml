@@ -1,6 +1,6 @@
 $kind: http-request
 name: login
-url: localhost:3007/login
+url: localhost:3007/member/logi
 method: POST
 body:
   type: json

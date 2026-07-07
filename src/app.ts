@@ -13,8 +13,8 @@ import T from './libs/types/common'; // generic object type helper
 // stores session data (who's logged in) inside MongoDB instead of server memory
 const MongoDBStore = ConnectMongoDB(session); // wraps express-session with a MongoDB store
 const store = new MongoDBStore({
-    uri: process.env.MONGO_URL as string, // same DB connection string used for the app's data
-    collection: 'sessions' // sessions are saved in their own "sessions" collection
+  uri: process.env.MONGO_URL as string, // same DB connection string used for the app's data
+  collection: 'sessions' // sessions are saved in their own "sessions" collection
 });
 
 // store.on('error', function (error) {
@@ -26,6 +26,7 @@ const app = express(); // creates the Express application
 app.use(express.static(path.join(__dirname, 'public'))); // serves /public (css, js, images) directly
 app.use(express.urlencoded({ extended: true })); // parses HTML form data (signup/login forms)
 app.use(express.json()); // parses JSON bodies (used by SPA/API and AJAX calls)
+app.use("/uploads", express.static("./uploads"));
 app.use(cookieParser()); // parses the Cookie header into req.cookies (needed for token auth)
 app.use(morgan(MORGAN_FORMAT)); //morgan logger, logs every request to the console
 
@@ -44,9 +45,9 @@ app.use(
 
 // makes the logged-in member available to every EJS view as `member` (e.g. for nav menus)
 app.use((req, res, next) => {
-    const sessionInstance = req.session as T; // cast session to a generic object type
-    res.locals.member = sessionInstance.member; // expose it to all EJS templates as `member`
-    next(); // continue to the next middleware/route
+  const sessionInstance = req.session as T; // cast session to a generic object type
+  res.locals.member = sessionInstance.member; // expose it to all EJS templates as `member`
+  next(); // continue to the next middleware/route
 });
 
 /** 3-VIEWS: EJS template engine setup for the admin (SSR) pages **/

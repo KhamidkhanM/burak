@@ -1,0 +1,32 @@
+$kind: http-request
+url: localhost:3007/member/update
+method: POST
+body:
+  type: formdata
+  content:
+    - type: text
+      key: memberNick
+      value: ""
+      description: ""
+      disabled: false
+    - type: text
+      key: memberPhone
+      value: ""
+      description: ""
+      disabled: false
+    - type: text
+      key: memberAddress
+      value: ""
+      description: ""
+      disabled: false
+    - type: text
+      key: memberDesc
+      value: ""
+      description: ""
+      disabled: false
+    - type: text
+      key: memberImage
+      value: ""
+      description: ""
+      disabled: false
+order: 4503383454902812
