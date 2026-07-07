@@ -8,6 +8,7 @@ import * as bcrypt from "bcryptjs"; // password hashing library
 import { shapeIntoMongooseObjectId } from "../libs/config"; // string -> ObjectId helper
 
 class MemberService {
+
   private readonly memberModel; // reference to the Mongoose model, set once in the constructor
 
   constructor() {
@@ -76,6 +77,17 @@ class MemberService {
       .findOneAndUpdate({ _id: memberId }, input, { new: true })
       .exec();
     if (!result) throw new Errors(HttpCode.NOT_MODIFIED, Message.UPDATE_FAILED);
+
+    return result;
+  }
+
+  public async getTopUsers(): Promise<Member[]> {
+    const result = await this.memberModel
+      .find({ memberStatus: MemberStatus.ACTIVE, memberPoints: { $gt: 1 } })
+      .sort({ memberPoints: -1 })
+      .limit(4)
+      .exec();
+    if (!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
 
     return result;
   }

@@ -25,6 +25,8 @@ router.post(
     memberController.updateMember, // updates the member's data in the DB
 );
 
+router.get("/member/top-users", memberController.getTopUsers);
+
 /** Product **/
 /** Order **/
 export default router; // exported so app.ts can mount it
