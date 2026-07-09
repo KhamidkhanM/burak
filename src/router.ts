@@ -32,6 +32,7 @@ router.get("/member/restaurant", memberController.getRestaurant);
 
 /** Product **/
 router.get("/product/all", productController.getProducts);
+router.get("/product/:id", memberController.retrieveAuth, productController.getProduct); // returns a single product by id, with optional auth to log the view
 
 /** Order **/
 export default router; // exported so app.ts can mount it

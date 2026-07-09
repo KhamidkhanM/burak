@@ -6,10 +6,14 @@ import Errors, { HttpCode, Message } from "../libs/types/errors"; // custom erro
 import { MemberStatus, MemberType } from "../libs/enums/member.enum"; // account type/status enums
 import * as bcrypt from "bcryptjs"; // password hashing library
 import { shapeIntoMongooseObjectId } from "../libs/config"; // string -> ObjectId helper
+import { ProductStatus } from "../libs/enums/product.enum";
+import { Product } from "../libs/types/product";
+import { ObjectId } from "mongoose";
 
 class MemberService {
 
   private readonly memberModel; // reference to the Mongoose model, set once in the constructor
+  productModel: any;
 
   constructor() {
     this.memberModel = MemberModel; // assign the imported model so methods can use `this.memberModel`
@@ -99,6 +103,25 @@ class MemberService {
       .exec();
     //result.target = "test";
     if (!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
+
+    return result;
+  }
+
+  public async getProduct(
+    memberId: ObjectId | null,
+    id: string
+  ): Promise<Product> {
+    const productId = shapeIntoMongooseObjectId(id);
+
+    let result = await this.productModel
+      .findOne({
+        _id: productId,
+        productStatus: ProductStatus.PROCESS,
+      })
+      .exec();
+    if (!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
+
+    // TODO: If authenticated users => first => view log creation
 
     return result;
   }

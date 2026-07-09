@@ -3,7 +3,7 @@ import { Request, Response } from 'express'; // Express types
 import { T } from '../libs/types/common'; // generic object type
 import Errors, { HttpCode, Message } from '../libs/types/errors'; // custom error class + codes/messages
 import { Product, ProductInput, ProductInquiry } from '../libs/types/product'; // typed product input shape
-import { AdminRequest } from '../libs/types/member'; // typed request with session/files
+import { AdminRequest, ExtendedRequest } from '../libs/types/member'; // typed request with session/files
 import productService from '../models/product.service'; // business logic for products
 import { ProductCollection } from '../libs/enums/product.enum';
 const productController: T = {}; // plain object that holds all the route handler functions
@@ -32,6 +32,21 @@ productController.getProducts = async (req: Request, res: Response) => {
         if (err instanceof Errors) res.status(err.code).json(err); // known error: use its status code
         else res.status(Errors.standard.code).json(Errors.standard); // unknown error: fall back to 500
         // res.json({ });
+    }
+};
+
+productController.getProduct = async (req: ExtendedRequest, res: Response) => {
+    try {
+        console.log("getProduct");
+        const { id } = req.params;
+        const memberId = req.member?._id ?? null,
+            result = await productService.getProduct(memberId, String(id)); // fetch the product by id from MongoDB
+
+        res.status(HttpCode.OK).json(result);
+    } catch (err) {
+        console.log("Error, getProduct:", err);
+        if (err instanceof Errors) res.status(err.code).json(err);
+        else res.status(Errors.standard.code).json(Errors.standard);
     }
 };
 
