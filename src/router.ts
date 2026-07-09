@@ -2,6 +2,7 @@
 import express from 'express'; // web framework
 const router = express.Router(); // creates a router instance to attach routes to
 import memberController from './controllers/member.controller'; // handlers for these routes
+import productController from './controllers/product.controller'; // handlers for product routes
 import uploader from './libs/utils/uploader'; // middleware for handling file uploads
 router.get('/', memberController.goHome); // landing page
 
@@ -28,6 +29,9 @@ router.post(
 router.get("/member/top-users", memberController.getTopUsers);
 router.get("/member/restaurant", memberController.getRestaurant);
 
+
 /** Product **/
+router.get("/product/all", productController.getProducts);
+
 /** Order **/
 export default router; // exported so app.ts can mount it

@@ -1,5 +1,5 @@
 // TypeScript shapes for product-related data, used across controllers/services for type safety.
-import {ObjectId} from "mongoose"; // Mongo's document id type
+import { ObjectId } from "mongoose"; // Mongo's document id type
 import {
   ProductCollection, // menu category enum
   ProductSize, // dish size enum
@@ -19,6 +19,14 @@ export interface Product {
   productDesc?: string; // optional description
   productImages: string[]; // list of image filenames
   productViews: number; // view counter
+}
+
+export interface ProductInquiry {
+  order: string;
+  page: number;
+  limit: number;
+  productCollection?: ProductCollection;
+  search?: string;
 }
 
 // fields required/allowed when creating a new product

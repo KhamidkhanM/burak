@@ -2,14 +2,41 @@
 import { Request, Response } from 'express'; // Express types
 import { T } from '../libs/types/common'; // generic object type
 import Errors, { HttpCode, Message } from '../libs/types/errors'; // custom error class + codes/messages
-import { ProductInput } from '../libs/types/product'; // typed product input shape
+import { Product, ProductInput, ProductInquiry } from '../libs/types/product'; // typed product input shape
 import { AdminRequest } from '../libs/types/member'; // typed request with session/files
 import productService from '../models/product.service'; // business logic for products
+import { ProductCollection } from '../libs/enums/product.enum';
 const productController: T = {}; // plain object that holds all the route handler functions
 
 /** SPA */
+productController.getProducts = async (req: Request, res: Response) => {
+    try {
+        console.log("getProducts"); // debug log
+        const { page, limit, order, productCollection, search } = req.query; // no query params expected for now
+        const inquiry: ProductInquiry = {
+            order: String(order), // default to ascending order
+            page: Number(page), // default to page 1
+            limit: Number(limit), // default to 10 items per page
+        }
+        if (productCollection) {
+            inquiry.productCollection = productCollection as ProductCollection;
+        }
+        if (search) {
+            inquiry.search = String(search);
+        }
+        const result = await productService.getProducts(inquiry); // fetch products from MongoDB based on the inquiry
+        res.status(HttpCode.OK).json(result); // fetch all products from MongoDB and return as JSON
 
-  /** SSR */
+    } catch (err) {
+        console.log("Error, getProducts:", err);
+        if (err instanceof Errors) res.status(err.code).json(err); // known error: use its status code
+        else res.status(Errors.standard.code).json(Errors.standard); // unknown error: fall back to 500
+        // res.json({ });
+    }
+};
+
+
+/** SSR */
 
 // fetches every product and renders the restaurant menu page
 productController.getAllProducts = async (req: Request, res: Response) => {
@@ -18,7 +45,7 @@ productController.getAllProducts = async (req: Request, res: Response) => {
         const data = await productService.getAllProducts(); // fetch all products from MongoDB
         // console.log("products:", data)
 
-        res.render('products', {products: data}); // render views/products.ejs with the list
+        res.render('products', { products: data }); // render views/products.ejs with the list
     } catch (err) {
         console.log("Error, getAllProducts:", err);
         if (err instanceof Errors) res.status(err.code).json(err); // known error: use its status code
@@ -65,7 +92,7 @@ productController.updateChosenProduct = async (req: Request, res: Response) => {
 
         const result = await productService.updateChosenProduct(id, req.body) // apply the update in MongoDB
 
-        res.status(HttpCode.OK).json({data: result}); // respond with the updated product
+        res.status(HttpCode.OK).json({ data: result }); // respond with the updated product
     } catch (err) {
         console.log("Error, updateChosenProduct:", err);
         if (err instanceof Errors) res.status(err.code).json(err); // known error: use its status code

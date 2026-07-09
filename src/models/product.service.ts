@@ -1,8 +1,10 @@
 // Business logic for products (the restaurant menu): list, create, update.
 // Talks to MongoDB through productModel; controllers call these methods, never the DB directly.
 import { shapeIntoMongooseObjectId } from "../libs/config"; // string -> ObjectId helper
+import { ProductStatus } from "../libs/enums/product.enum";
+import T from "../libs/types/common";
 import Errors, { HttpCode, Message } from "../libs/types/errors"; // custom error class + codes/messages
-import { Product, ProductInput } from "../libs/types/product"; // typed shapes
+import { Product, ProductInput, ProductInquiry } from "../libs/types/product"; // typed shapes
 import productModel from "../schema/product.model"; // the Mongoose model/collection
 
 
@@ -14,13 +16,40 @@ class ProductService {
   }
 
   /** SPA */
+  public async getProducts(inquiry: ProductInquiry): Promise<Product[]> {
+    const match: T = { productStatus: ProductStatus.PROCESS };
+
+    if (inquiry.productCollection)
+      match.productCollect = inquiry.productCollection;
+    if (inquiry.search) {
+      match.productName = { $regex: new RegExp(inquiry.search, "i") }; // case-insensitive search
+    }
+
+    const sort: T =
+      inquiry.order === "productPrice"
+        ? { [inquiry.order]: 1 }
+        : { [inquiry.order]: -1 };
+
+    const result = await this.productModel
+      .aggregate([
+        { $match: match },
+        { $sort: sort },
+        { $skip: (inquiry.page * 1 - 1) * inquiry.limit },
+        { $limit: inquiry.limit * 1 },
+      ])
+      .exec();
+    if (!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
+
+    return result;
+  }
+
 
   /** SSR */
   // returns every product in the menu
   public async getAllProducts(): Promise<Product[]> {
 
     const result = await this.productModel.find().exec(); // fetch every product document
-    if(!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND) // safety check
+    if (!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND) // safety check
 
     return result;
   }
@@ -40,8 +69,8 @@ class ProductService {
     id: string,
     input: ProductInput): Promise<Product> {
     id = shapeIntoMongooseObjectId(id); // convert string id from the URL param into a real ObjectId
-    const result = await this.productModel.findOneAndUpdate({ _id: id}, input, {new: true}).exec(); // {new:true} returns the updated doc
-    if(!result) throw new Errors(HttpCode.NOT_MODIFIED, Message.UPDATE_FAILED) // no document found to update
+    const result = await this.productModel.findOneAndUpdate({ _id: id }, input, { new: true }).exec(); // {new:true} returns the updated doc
+    if (!result) throw new Errors(HttpCode.NOT_MODIFIED, Message.UPDATE_FAILED) // no document found to update
 
     return result;
   }
