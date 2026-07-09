@@ -7,12 +7,16 @@ import Errors, { HttpCode, Message } from "../libs/types/errors"; // custom erro
 import { Product, ProductInput, ProductInquiry } from "../libs/types/product"; // typed shapes
 import productModel from "../schema/product.model"; // the Mongoose model/collection
 import { ObjectId } from "mongoose";
+import ViewService from "./View.service"; // service for logging product views
+import { ViewInput } from "../libs/types/view";
+import { ViewGroup } from "../libs/enums/view.enum";
 
 class ProductService {
   private readonly productModel; // reference to the Mongoose model, set once in the constructor
-
+  public viewService; // reference to the ViewService, set once in the constructor 
   constructor() {
     this.productModel = productModel; // assign the imported model so methods can use `this.productModel`
+    this.viewService = new ViewService();
   }
 
   /** SPA */
@@ -57,7 +61,26 @@ class ProductService {
       .exec();
     if (!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
 
-    // TODO: If authenticated users => first => view log creation
+    if (memberId) {
+      const input: ViewInput = {
+        memberId,
+        viewRefId: productId,
+        viewGroup: ViewGroup.PRODUCT,
+      };
+      const existView = await this.viewService.checkViewExistence(input);
+
+      if (!existView) {
+        await this.viewService.insertMemberView(input);
+
+        result = await this.productModel
+          .findByIdAndUpdate(
+            productId,
+            { $inc: { productViews: 1 } },
+            { new: true }
+          )
+          .exec();
+      }
+    }
 
     return result;
   }
