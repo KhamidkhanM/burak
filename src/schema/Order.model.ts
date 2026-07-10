@@ -10,6 +10,11 @@ const orderSchema = new Schema(
             required: true,
         },
 
+        orderDelivery: {
+            type: Number, // delivery fee; without this field Mongoose would silently drop the value
+            required: true,
+        },
+
         orderStatus: {
             type: String,
             enum: OrderStatus,

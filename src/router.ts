@@ -4,6 +4,7 @@ const router = express.Router(); // creates a router instance to attach routes t
 import memberController from './controllers/member.controller'; // handlers for these routes
 import productController from './controllers/product.controller'; // handlers for product routes
 import uploader from './libs/utils/uploader'; // middleware for handling file uploads
+import orderController from './controllers/order.controller'; // handlers for order routes
 router.get('/', memberController.goHome); // landing page
 
 /** Member **/
@@ -35,4 +36,10 @@ router.get("/product/all", productController.getProducts);
 router.get("/product/:id", memberController.retrieveAuth, productController.getProduct); // returns a single product by id, with optional auth to log the view
 
 /** Order **/
+router.post(
+    '/order/create',
+    memberController.verifyAuth, // middleware: must be logged in to order
+    orderController.createOrder, // creates the order + its item lines
+);
+
 export default router; // exported so app.ts can mount it
