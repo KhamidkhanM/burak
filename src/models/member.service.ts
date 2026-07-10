@@ -83,13 +83,32 @@ class MemberService {
 
   public async getTopUsers(): Promise<Member[]> {
     const result = await this.memberModel
-      .find({ memberStatus: MemberStatus.ACTIVE, memberPoints: { $gt: 1 } })
+      .find({
+        memberStatus: MemberStatus.ACTIVE, // only active accounts
+        memberPoints: { $gte: 1 }, // $gte = greater than or equal: at least 1 point
+      })
       .sort({ memberPoints: -1 })
       .limit(4)
       .exec();
     if (!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
 
     return result;
+  }
+
+  // adds loyalty points to an active USER (e.g. +1 when they pay for an order)
+  public async addUserPoint(member: Member, point: number): Promise<Member> {
+    const memberId = shapeIntoMongooseObjectId(member._id); // the id from the token, made into an ObjectId
+    return await this.memberModel
+      .findOneAndUpdate(
+        {
+          _id: memberId, // this member...
+          memberType: MemberType.USER, // ...must be a regular user...
+          memberStatus: MemberStatus.ACTIVE, // ...and still active
+        },
+        { $inc: { memberPoints: point } }, // $inc = increment the points by `point`
+        { new: true }, // return the updated document
+      )
+      .exec(); // run the query
   }
 
   public async getRestaurant(): Promise<Member> {

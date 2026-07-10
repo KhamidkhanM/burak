@@ -41,3 +41,9 @@ export interface OrderInquiry {
   limit: number; // how many orders per page
   orderStatus: OrderStatus; // only orders in this state (e.g. PAUSE = current basket)
 }
+
+// what the frontend sends to change an order's status (e.g. PAUSE -> PROCESS on payment)
+export interface OrderUpdateInput {
+  orderId: string; // which order to update
+  orderStatus: OrderStatus; // the new status
+}

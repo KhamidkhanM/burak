@@ -46,5 +46,10 @@ router.get(
     memberController.verifyAuth, // middleware: must be logged in
     orderController.getMyOrders, // lists the member's own orders (paginated, by status)
 );
+router.post(
+    '/order/update',
+    memberController.verifyAuth, // middleware: must be logged in
+    orderController.updateOrder, // changes an order's status (pay/cancel/finish)
+);
 
 export default router; // exported so app.ts can mount it

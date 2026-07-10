@@ -4,7 +4,7 @@ import Errors, { HttpCode } from "../libs/types/errors"; // custom error class +
 import { ExtendedRequest } from "../libs/types/member"; // request with req.member set by verifyAuth
 import { Response } from "express"; // Express response type
 import OrderService from "../models/Order.service"; // business logic for orders
-import { OrderInquiry } from "../libs/types/order"; // query params shape for listing orders
+import { OrderInquiry, OrderUpdateInput } from "../libs/types/order"; // typed shapes for order requests
 import { OrderStatus } from "../libs/enums/order.enum"; // PAUSE / PROCESS / FINISH / DELETE
 
 const orderService = new OrderService(); // single shared instance of the service
@@ -39,6 +39,20 @@ orderController.getMyOrders = async (req: ExtendedRequest, res: Response) => {
     res.status(HttpCode.OK).json(result); // 200 + the orders (with items + products joined)
   } catch (err) {
     console.log("Error, getMyOrders:", err); // log the real error for debugging
+    if (err instanceof Errors) res.status(err.code).json(err); // known error: use its status code
+    else res.status(Errors.standard.code).json(Errors.standard); // unknown error: fall back to 500
+  }
+};
+
+// API update order: changes an order's status (pay, cancel, finish) for the logged-in member
+orderController.updateOrder = async (req: ExtendedRequest, res: Response) => {
+  try {
+    console.log("updateOrder"); // debug log
+    const input: OrderUpdateInput = req.body; // { orderId, orderStatus }
+    const result = await orderService.updateOrder(req.member, input); // req.member set by verifyAuth
+    res.status(HttpCode.OK).json(result); // 200 + the updated order
+  } catch (err) {
+    console.log("Error, updateOrder:", err); // log the real error for debugging
     if (err instanceof Errors) res.status(err.code).json(err); // known error: use its status code
     else res.status(Errors.standard.code).json(Errors.standard); // unknown error: fall back to 500
   }

@@ -4,17 +4,21 @@ import { ObjectId } from "mongoose"; // Mongo's document id type
 import { shapeIntoMongooseObjectId } from "../libs/config"; // string -> ObjectId helper
 import Errors, { HttpCode, Message } from "../libs/types/errors"; // custom error class + codes/messages
 import { Member } from "../libs/types/member"; // the logged-in member placing the order
-import { Order, OrderInquiry, OrderItemInput } from "../libs/types/order"; // typed shapes
+import { Order, OrderInquiry, OrderItemInput, OrderUpdateInput } from "../libs/types/order"; // typed shapes
 import OrderModel from "../schema/Order.model"; // the "orders" Mongoose model
 import OrderItemModel from "../schema/OrderItem.model"; // the "orderItems" Mongoose model
+import { OrderStatus } from "../libs/enums/order.enum"; // PAUSE / PROCESS / FINISH / DELETE
+import MemberService from "./member.service"; // used to award points when an order is paid
 
 class OrderService {
   private readonly orderModel; // reference to the orders model
   private readonly orderItemModel; // reference to the orderItems model
+  private readonly memberService; // member business logic (for addUserPoint)
 
   constructor() {
     this.orderModel = OrderModel; // assign so methods can use `this.orderModel`
     this.orderItemModel = OrderItemModel; // assign so methods can use `this.orderItemModel`
+    this.memberService = new MemberService(); // own instance of the member service
   }
 
   // creates a new order for the logged-in member from a list of basket items
@@ -99,6 +103,35 @@ class OrderService {
     if (!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND); // safety check
 
     return result; // orders, each carrying its orderItems + productData
+  }
+
+  // changes an order's status (e.g. PAUSE -> PROCESS when the member pays)
+  public async updateOrder(
+    member: Member,
+    input: OrderUpdateInput,
+  ): Promise<Order> {
+    const memberId = shapeIntoMongooseObjectId(member._id), // who is asking
+      orderId = shapeIntoMongooseObjectId(input.orderId), // which order
+      orderStatus = input.orderStatus; // the new status
+
+    const result = await this.orderModel
+      .findOneAndUpdate(
+        {
+          memberId: memberId, // the order must belong to this member (can't touch others' orders)
+          _id: orderId, // and match the requested id
+        },
+        { orderStatus: orderStatus }, // apply the new status
+        { new: true }, // return the updated document
+      )
+      .exec(); // run the query
+    if (!result) throw new Errors(HttpCode.NOT_MODIFIED, Message.UPDATE_FAILED); // not found / not theirs
+
+    // paying an order (moving it to PROCESS) rewards the member with 1 loyalty point
+    if (orderStatus === OrderStatus.PROCESS) {
+      await this.memberService.addUserPoint(member, 1);
+    }
+
+    return result; // hand the updated order back
   }
 }
 
