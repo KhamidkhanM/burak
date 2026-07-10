@@ -1,6 +1,7 @@
 // TypeScript shapes for order-related data, used across controllers/services for type safety.
 import { ObjectId } from "mongoose"; // Mongo's document id type
 import { OrderStatus } from "../enums/order.enum"; // PAUSE / PROCESS / FINISH / DELETE
+import { Product } from "./product"; // used for the joined product data in aggregations
 
 // one line inside an order (a product + how many of it), as stored in "orderItems"
 export interface OrderItem {
@@ -21,6 +22,9 @@ export interface Order {
   memberId: ObjectId; // who placed the order
   createdAt: Date; // auto-set by Mongoose timestamps
   updatedAt: Date; // auto-set by Mongoose timestamps
+  /** from aggregations **/
+  orderItems: OrderItem[]; // joined in by $lookup: this order's item lines
+  productData: Product[]; // joined in by $lookup: the products those lines point at
 }
 
 // what the frontend sends per basket item when creating an order
@@ -29,4 +33,11 @@ export interface OrderItemInput {
   itemPrice: number; // unit price
   productId: ObjectId; // which product
   orderId?: ObjectId; // filled in by the server after the order is created
+}
+
+// query params for listing a member's orders (pagination + status filter)
+export interface OrderInquiry {
+  page: number; // which page of results
+  limit: number; // how many orders per page
+  orderStatus: OrderStatus; // only orders in this state (e.g. PAUSE = current basket)
 }

@@ -4,7 +4,7 @@ import { ObjectId } from "mongoose"; // Mongo's document id type
 import { shapeIntoMongooseObjectId } from "../libs/config"; // string -> ObjectId helper
 import Errors, { HttpCode, Message } from "../libs/types/errors"; // custom error class + codes/messages
 import { Member } from "../libs/types/member"; // the logged-in member placing the order
-import { Order, OrderItemInput } from "../libs/types/order"; // typed shapes
+import { Order, OrderInquiry, OrderItemInput } from "../libs/types/order"; // typed shapes
 import OrderModel from "../schema/Order.model"; // the "orders" Mongoose model
 import OrderItemModel from "../schema/OrderItem.model"; // the "orderItems" Mongoose model
 
@@ -62,6 +62,43 @@ class OrderService {
 
     const orderItemsState = await Promise.all(promisedList); // wait until ALL inserts finish
     console.log("orderItemsState:", orderItemsState); // debug log, e.g. ["INSERTED", "INSERTED"]
+  }
+
+  // lists the logged-in member's orders (paginated, filtered by status), with items + products joined in
+  public async getMyOrders(
+    member: Member,
+    inquiry: OrderInquiry,
+  ): Promise<Order[]> {
+    const memberId = shapeIntoMongooseObjectId(member._id); // the id from the token, made into an ObjectId
+    const matches = { memberId: memberId, orderStatus: inquiry.orderStatus }; // only MY orders in the requested state
+
+    const result = await this.orderModel
+      .aggregate([ // aggregation pipeline: each stage transforms the previous stage's output
+        { $match: matches }, // 1) keep only this member's orders with the wanted status
+        { $sort: { updatedAt: -1 } }, // 2) newest orders first
+        { $skip: (inquiry.page - 1) * inquiry.limit }, // 3) skip past earlier pages
+        { $limit: inquiry.limit }, // 4) take one page's worth
+        {
+          $lookup: { // 5) join: pull in this order's item lines
+            from: "orderItems", // the collection to join with
+            localField: "_id", // order's _id ...
+            foreignField: "orderId", // ... matches orderItems.orderId
+            as: "orderItems", // attach the matches as an array field
+          },
+        },
+        {
+          $lookup: { // 6) join: pull in the actual product documents for those lines
+            from: "products", // the collection to join with
+            localField: "orderItems.productId", // the product ids inside the joined lines
+            foreignField: "_id", // ... match against products._id
+            as: "productData", // attach as an array field
+          },
+        },
+      ])
+      .exec(); // run the pipeline
+    if (!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND); // safety check
+
+    return result; // orders, each carrying its orderItems + productData
   }
 }
 

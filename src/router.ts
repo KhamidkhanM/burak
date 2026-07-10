@@ -41,5 +41,10 @@ router.post(
     memberController.verifyAuth, // middleware: must be logged in to order
     orderController.createOrder, // creates the order + its item lines
 );
+router.get(
+    '/order/all',
+    memberController.verifyAuth, // middleware: must be logged in
+    orderController.getMyOrders, // lists the member's own orders (paginated, by status)
+);
 
 export default router; // exported so app.ts can mount it
