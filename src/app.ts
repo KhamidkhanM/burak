@@ -1,3 +1,4 @@
+import cors from 'cors';
 import express from 'express'; // web framework
 import path from 'path'; // node utility for building file paths
 import router from './router'; // SPA/API routes ('/')
@@ -26,6 +27,7 @@ const app = express(); // creates the Express application
 app.use(express.static(path.join(__dirname, 'public'))); // serves /public (css, js, images) directly
 app.use(express.urlencoded({ extended: true })); // parses HTML form data (signup/login forms)
 app.use(express.json()); // parses JSON bodies (used by SPA/API and AJAX calls)
+app.use(cors({ origin: true, credentials: true })); // allows cross-origin requests from the SPA (with cookies)
 app.use("/uploads", express.static("./uploads"));
 app.use(cookieParser()); // parses the Cookie header into req.cookies (needed for token auth)
 app.use(morgan(MORGAN_FORMAT)); //morgan logger, logs every request to the console

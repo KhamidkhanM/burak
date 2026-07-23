@@ -19,6 +19,8 @@ export interface Product {
   productDesc?: string; // optional description
   productImages: string[]; // list of image filenames
   productViews: number; // view counter
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface ProductInquiry {
